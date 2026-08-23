@@ -22,6 +22,7 @@ import { TranslatorModal } from './components/modals/TranslatorModal';
 import { EnquiryReservationModal } from './components/modals/EnquiryReservationModal';
 import { DestinationDetailModal } from './components/modals/DestinationDetailModal';
 import { HotelDetailModal, RestaurantDetailModal } from './components/modals/HotelDetailModal';
+import { AuthModal } from './components/modals/AuthModal';
 
 const AppContent: React.FC = () => {
   const { activeTab } = useTravel();
@@ -92,6 +93,7 @@ const AppContent: React.FC = () => {
       <DestinationDetailModal />
       <HotelDetailModal />
       <RestaurantDetailModal />
+      <AuthModal />
     </div>
   );
 };

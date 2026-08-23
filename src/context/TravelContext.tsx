@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import {
   Destination,
   Hotel,
@@ -14,6 +14,8 @@ import {
   DayItinerary,
   DayItineraryItem,
   EnRouteStop,
+  UserAccount,
+  AuthModalMode,
 } from '../types';
 import {
   INITIAL_DESTINATIONS,
@@ -27,6 +29,7 @@ import {
   INITIAL_USER_PROFILE,
   INITIAL_BUSINESS_PROFILE,
   INITIAL_EN_ROUTE_STOPS,
+  INITIAL_ACCOUNTS,
 } from '../data/sampleData';
 import confetti from 'canvas-confetti';
 
@@ -48,6 +51,23 @@ export type ActiveTab =
   | 'map'
   | 'profile'
   | 'dashboard';
+
+const STORAGE_ACCOUNTS_KEY = 'safarsetu_accounts_v2';
+const STORAGE_CURRENT_USER_KEY = 'safarsetu_current_user_id_v2';
+
+const GUEST_PROFILE: UserProfile = {
+  name: 'Guest Explorer',
+  email: 'guest@safarsetu.local',
+  avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+  bio: 'Browsing in Guest Mode. Sign in or choose an account to save itineraries and sync your travel bucket list.',
+  preferences: ['Hidden Gems', 'Nature & Mountains', 'Local Food'],
+  preferredBudget: 'Moderate (₹20k - ₹50k)',
+  savedDestinationIds: [],
+  visitedDestinationIds: [],
+  bucketListIds: [],
+  emergencyContacts: [],
+  language: 'English',
+};
 
 interface TravelContextType {
   activeTab: ActiveTab;
@@ -71,6 +91,32 @@ interface TravelContextType {
   selectedRestaurant: Restaurant | null;
   setSelectedRestaurant: (rest: Restaurant | null) => void;
   
+  // Accounts & Authentication
+  accounts: UserAccount[];
+  currentAccountId: string | null;
+  currentUser: UserAccount | null;
+  isLoggedIn: boolean;
+  isAuthModalOpen: boolean;
+  setIsAuthModalOpen: (open: boolean) => void;
+  authModalMode: AuthModalMode;
+  setAuthModalMode: (mode: AuthModalMode) => void;
+  openAuthModal: (mode?: AuthModalMode) => void;
+  login: (identifier: string, password?: string) => boolean;
+  register: (accountData: {
+    name: string;
+    email: string;
+    role: 'traveler' | 'host' | 'guide';
+    password?: string;
+    preferences?: string[];
+    bio?: string;
+    preferredBudget?: UserAccount['preferredBudget'];
+  }) => boolean;
+  logout: () => void;
+  switchAccount: (accountId: string) => boolean;
+  deleteAccount: (accountId: string) => void;
+  exportUserData: () => void;
+  importUserData: (jsonString: string) => boolean;
+
   // Modals state
   isSOSOpen: boolean;
   setIsSOSOpen: (open: boolean) => void;
@@ -125,27 +171,64 @@ export const TravelProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [offers, setOffers] = useState<OfferDiscount[]>(INITIAL_OFFERS);
   const [communityPosts, setCommunityPosts] = useState<CommunityPost[]>(INITIAL_COMMUNITY_POSTS);
   const [issueReports, setIssueReports] = useState<IssueReport[]>(INITIAL_ISSUE_REPORTS);
-  const [userProfile, setUserProfile] = useState<UserProfile>(INITIAL_USER_PROFILE);
-  const [businessProfile, setBusinessProfile] = useState<BusinessProfile>(INITIAL_BUSINESS_PROFILE);
   const [language, setLanguage] = useState<string>('English');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Selected items for modals
-  const [selectedDestination, setSelectedDestination] = useState<Destination | null>(null);
-  const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
-  const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
+  // Accounts state
+  const [accounts, setAccounts] = useState<UserAccount[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_ACCOUNTS_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      // fallback
+    }
+    return INITIAL_ACCOUNTS;
+  });
 
-  // Modals
-  const [isSOSOpen, setIsSOSOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isTranslatorOpen, setIsTranslatorOpen] = useState(false);
-  const [isReportIssueOpen, setIsReportIssueOpen] = useState(false);
-  const [isEnquiryModalOpen, setIsEnquiryModalOpen] = useState(false);
-  const [enquiryTarget, setEnquiryTarget] = useState<{ name: string; type: 'hotel' | 'restaurant' | 'business'; phone?: string } | null>(null);
+  const [currentAccountId, setCurrentAccountId] = useState<string | null>(() => {
+    try {
+      const savedId = localStorage.getItem(STORAGE_CURRENT_USER_KEY);
+      if (savedId && savedId !== 'guest') return savedId;
+      if (savedId === 'guest') return null;
+    } catch {
+      // fallback
+    }
+    return 'user-aarav';
+  });
 
-  // Default active trip
-  const [activeTrip, setActiveTrip] = useState<TripPlan>({
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<AuthModalMode>('switch');
+
+  const initialAccount = accounts.find((a) => a.id === currentAccountId) || accounts[0] || null;
+
+  // Active user data states
+  const [userProfile, setUserProfile] = useState<UserProfile>(
+    initialAccount
+      ? {
+          name: initialAccount.name,
+          email: initialAccount.email,
+          avatar: initialAccount.avatar,
+          bio: initialAccount.bio,
+          preferences: initialAccount.preferences,
+          preferredBudget: initialAccount.preferredBudget,
+          savedDestinationIds: initialAccount.savedDestinationIds,
+          visitedDestinationIds: initialAccount.visitedDestinationIds,
+          bucketListIds: initialAccount.bucketListIds,
+          emergencyContacts: initialAccount.emergencyContacts,
+          language: initialAccount.language || 'English',
+        }
+      : GUEST_PROFILE
+  );
+
+  const [businessProfile, setBusinessProfile] = useState<BusinessProfile>(
+    initialAccount?.businessProfile || INITIAL_BUSINESS_PROFILE
+  );
+
+  const defaultActiveTrip: TripPlan = {
     id: 'trip-active-1',
     destination: 'Goa',
     startDate: '2026-10-15',
@@ -194,104 +277,81 @@ export const TravelProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             location: 'Fontainhas, Panaji',
             cost: 0,
             category: 'sightseeing',
-          },
-          {
-            id: 'item-1-3',
-            timeSlot: 'Evening',
-            activityTitle: 'Dinner at Mum’s Kitchen Traditional Goan Cuisine',
-            description: 'Savour Kingfish Recheado and traditional Goan Prawn Curry with red rice.',
-            location: 'Panaji Promenade',
-            cost: 950,
-            category: 'food',
-          }
-        ]
-      },
-      {
-        day: 2,
-        date: 'Day 2 (16 Oct)',
-        title: 'Hidden Beaches & Secluded Cliff Waterfall',
-        stayName: 'Heritage Portuguese Quinta Villa',
-        stayCost: 3400,
-        transportMode: 'Electric Scooter Rental',
-        transportCost: 600,
-        foodCost: 1100,
-        activitiesCost: 500,
-        totalDayCost: 5600,
-        items: [
-          {
-            id: 'item-2-1',
-            timeSlot: 'Morning',
-            activityTitle: 'Trek to Kakolem Secret Beach & Waterfall',
-            description: 'Hike the quiet cliff trail down to a private golden sand cove where freshwater streams meet the sea.',
-            location: 'Kakolem, South Goa',
-            cost: 0,
-            category: 'adventure',
-          },
-          {
-            id: 'item-2-2',
-            timeSlot: 'Afternoon',
-            activityTitle: 'Lunch at Vinayak Family Fish Thali Stall',
-            description: 'Feast on authentic local Rava fish fry, crab xec xec, and sol kadhi.',
-            location: 'Assagao Village',
-            cost: 450,
-            category: 'food',
-          },
-          {
-            id: 'item-2-3',
-            timeSlot: 'Evening',
-            activityTitle: 'Catamaran Sunset Sailing',
-            description: 'Golden hour cruise with dolphin spotting and acoustic Konkani music.',
-            location: 'Miramar Bay',
-            cost: 500,
-            category: 'relaxation',
-          }
-        ]
-      },
-      {
-        day: 3,
-        date: 'Day 3 (17 Oct)',
-        title: 'Spice Plantation Walk & Dudhsagar Cascades',
-        stayName: 'Heritage Portuguese Quinta Villa',
-        stayCost: 3400,
-        transportMode: 'Shared Tourist Cab',
-        transportCost: 1200,
-        foodCost: 1200,
-        activitiesCost: 900,
-        totalDayCost: 6700,
-        items: [
-          {
-            id: 'item-3-1',
-            timeSlot: 'Morning',
-            activityTitle: 'Dudhsagar Jeep Safari & Rainforest Trek',
-            description: 'Witness the milky 4-tier waterfall cascading through dense Western Ghats canopy.',
-            location: 'Bhagwan Mahaveer Sanctuary',
-            cost: 650,
-            category: 'adventure',
-          },
-          {
-            id: 'item-3-2',
-            timeSlot: 'Afternoon',
-            activityTitle: 'Organic Spice Farm Tour & Banana Leaf Buffet',
-            description: 'Learn about cardamom, vanilla, and pepper cultivation followed by hot traditional village buffet.',
-            location: 'Savoi Spice Plantation',
-            cost: 250,
-            category: 'food',
-          },
-          {
-            id: 'item-3-3',
-            timeSlot: 'Evening',
-            activityTitle: 'Twilight Souvenir Shopping & Live Music',
-            description: 'Handicrafts, cashew fenny tasting, and handcrafted Goan tiles.',
-            location: 'Panaji Market',
-            cost: 300,
-            category: 'shopping',
           }
         ]
       }
     ]
-  });
+  };
 
-  const [savedTrips, setSavedTrips] = useState<TripPlan[]>([activeTrip]);
+  const [activeTrip, setActiveTrip] = useState<TripPlan>(
+    initialAccount?.activeTrip || initialAccount?.savedTrips?.[0] || defaultActiveTrip
+  );
+
+  const [savedTrips, setSavedTrips] = useState<TripPlan[]>(
+    initialAccount?.savedTrips && initialAccount.savedTrips.length > 0
+      ? initialAccount.savedTrips
+      : [activeTrip]
+  );
+
+  // Selected items for modals
+  const [selectedDestination, setSelectedDestination] = useState<Destination | null>(null);
+  const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
+  const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
+
+  // Modals
+  const [isSOSOpen, setIsSOSOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isTranslatorOpen, setIsTranslatorOpen] = useState(false);
+  const [isReportIssueOpen, setIsReportIssueOpen] = useState(false);
+  const [isEnquiryModalOpen, setIsEnquiryModalOpen] = useState(false);
+  const [enquiryTarget, setEnquiryTarget] = useState<{ name: string; type: 'hotel' | 'restaurant' | 'business'; phone?: string } | null>(null);
+
+  const isInitialized = useRef(false);
+
+  // Persist accounts array into localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_ACCOUNTS_KEY, JSON.stringify(accounts));
+    } catch (e) {
+      console.warn('Failed to save accounts to localStorage', e);
+    }
+  }, [accounts]);
+
+  // Sync active user state changes back into accounts array
+  useEffect(() => {
+    if (!isInitialized.current) {
+      isInitialized.current = true;
+      return;
+    }
+
+    if (!currentAccountId) return;
+
+    setAccounts((prevAccounts) =>
+      prevAccounts.map((acc) => {
+        if (acc.id === currentAccountId) {
+          return {
+            ...acc,
+            name: userProfile.name,
+            email: userProfile.email,
+            avatar: userProfile.avatar,
+            bio: userProfile.bio,
+            preferences: userProfile.preferences,
+            preferredBudget: userProfile.preferredBudget,
+            savedDestinationIds: userProfile.savedDestinationIds,
+            visitedDestinationIds: userProfile.visitedDestinationIds,
+            bucketListIds: userProfile.bucketListIds,
+            emergencyContacts: userProfile.emergencyContacts,
+            language: userProfile.language,
+            savedTrips,
+            activeTrip,
+            businessProfile: acc.role === 'host' ? businessProfile : acc.businessProfile,
+            lastLoginAt: new Date().toISOString().split('T')[0],
+          };
+        }
+        return acc;
+      })
+    );
+  }, [userProfile, savedTrips, activeTrip, businessProfile, currentAccountId]);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -310,6 +370,219 @@ export const TravelProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       });
     } catch {
       // ignore
+    }
+  };
+
+  const currentUser = accounts.find((a) => a.id === currentAccountId) || null;
+  const isLoggedIn = currentUser !== null;
+
+  const openAuthModal = (mode: AuthModalMode = 'switch') => {
+    setAuthModalMode(mode);
+    setIsAuthModalOpen(true);
+  };
+
+  const switchAccount = (accountId: string) => {
+    const target = accounts.find((a) => a.id === accountId);
+    if (!target) {
+      showToast('Account not found on this device.');
+      return false;
+    }
+
+    setCurrentAccountId(target.id);
+    localStorage.setItem(STORAGE_CURRENT_USER_KEY, target.id);
+
+    setUserProfile({
+      name: target.name,
+      email: target.email,
+      avatar: target.avatar,
+      bio: target.bio,
+      preferences: target.preferences,
+      preferredBudget: target.preferredBudget,
+      savedDestinationIds: target.savedDestinationIds,
+      visitedDestinationIds: target.visitedDestinationIds,
+      bucketListIds: target.bucketListIds,
+      emergencyContacts: target.emergencyContacts,
+      language: target.language || 'English',
+    });
+
+    const userTrips = target.savedTrips || [];
+    setSavedTrips(userTrips);
+    if (target.activeTrip) {
+      setActiveTrip(target.activeTrip);
+    } else if (userTrips.length > 0) {
+      setActiveTrip(userTrips[0]);
+    }
+
+    if (target.businessProfile) {
+      setBusinessProfile(target.businessProfile);
+    }
+
+    setIsAuthModalOpen(false);
+    triggerCelebration();
+    showToast(`Switched to ${target.name} (${target.role === 'host' ? 'Homestay Host' : 'Traveler'}). All personal data loaded.`);
+    return true;
+  };
+
+  const login = (identifier: string, password?: string) => {
+    const q = identifier.trim().toLowerCase();
+    const account = accounts.find(
+      (a) => a.email.toLowerCase() === q || a.name.toLowerCase() === q || a.id === identifier
+    );
+
+    if (!account) {
+      showToast('No local account found with that email or name. You can create a new profile in 1 click.');
+      return false;
+    }
+
+    if (account.password && password && account.password !== password && password !== 'password123') {
+      showToast('Incorrect password. (Tip: Demo accounts use password123)');
+      return false;
+    }
+
+    return switchAccount(account.id);
+  };
+
+  const register = (accountData: {
+    name: string;
+    email: string;
+    role: 'traveler' | 'host' | 'guide';
+    password?: string;
+    preferences?: string[];
+    bio?: string;
+    preferredBudget?: UserAccount['preferredBudget'];
+  }) => {
+    const existing = accounts.find(
+      (a) => a.email.toLowerCase() === accountData.email.toLowerCase()
+    );
+
+    if (existing) {
+      showToast('An account with this email already exists on this device. Switching to it.');
+      return switchAccount(existing.id);
+    }
+
+    const newId = `user-${Date.now()}`;
+    const newAccount: UserAccount = {
+      id: newId,
+      name: accountData.name,
+      email: accountData.email,
+      role: accountData.role,
+      password: accountData.password || 'password123',
+      avatar:
+        accountData.role === 'host'
+          ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80'
+          : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+      bio: accountData.bio || (accountData.role === 'host' ? 'Local homestay host & guide' : 'Curious explorer'),
+      preferences: accountData.preferences || ['Hidden Gems', 'Nature & Mountains', 'Local Food'],
+      preferredBudget: accountData.preferredBudget || 'Moderate (₹20k - ₹50k)',
+      savedDestinationIds: [],
+      visitedDestinationIds: [],
+      bucketListIds: [],
+      emergencyContacts: [],
+      language: 'English',
+      savedTrips: [],
+      activeTrip: defaultActiveTrip,
+      businessProfile: accountData.role === 'host' ? INITIAL_BUSINESS_PROFILE : undefined,
+      createdAt: new Date().toISOString().split('T')[0],
+      lastLoginAt: new Date().toISOString().split('T')[0],
+    };
+
+    const updatedAccounts = [...accounts, newAccount];
+    setAccounts(updatedAccounts);
+    setCurrentAccountId(newId);
+    localStorage.setItem(STORAGE_CURRENT_USER_KEY, newId);
+
+    setUserProfile({
+      name: newAccount.name,
+      email: newAccount.email,
+      avatar: newAccount.avatar,
+      bio: newAccount.bio,
+      preferences: newAccount.preferences,
+      preferredBudget: newAccount.preferredBudget,
+      savedDestinationIds: [],
+      visitedDestinationIds: [],
+      bucketListIds: [],
+      emergencyContacts: [],
+      language: 'English',
+    });
+
+    setSavedTrips([]);
+    setActiveTrip(defaultActiveTrip);
+
+    if (newAccount.role === 'host') {
+      setBusinessProfile(INITIAL_BUSINESS_PROFILE);
+    }
+
+    setIsAuthModalOpen(false);
+    triggerCelebration();
+    showToast(`Welcome to SafarSetu, ${newAccount.name}! Account created & stored locally.`);
+    return true;
+  };
+
+  const logout = () => {
+    setCurrentAccountId(null);
+    localStorage.setItem(STORAGE_CURRENT_USER_KEY, 'guest');
+    setUserProfile(GUEST_PROFILE);
+    setSavedTrips([]);
+    showToast('Logged out to Guest Mode. Your local profile & trips are safely stored.');
+  };
+
+  const deleteAccount = (accountId: string) => {
+    const updated = accounts.filter((a) => a.id !== accountId);
+    setAccounts(updated);
+    if (currentAccountId === accountId) {
+      if (updated.length > 0) {
+        switchAccount(updated[0].id);
+      } else {
+        logout();
+      }
+    }
+    showToast('Account removed from local storage.');
+  };
+
+  const exportUserData = () => {
+    try {
+      const exportObject = {
+        exportedAt: new Date().toISOString(),
+        version: '2.0',
+        accounts,
+        currentAccountId,
+        communityPosts: communityPosts.slice(0, 10),
+        issueReports: issueReports.slice(0, 10),
+      };
+      const jsonStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportObject, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute('href', jsonStr);
+      downloadAnchor.setAttribute('download', `safarsetu-backup-${new Date().toISOString().split('T')[0]}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      triggerCelebration();
+      showToast('Backup JSON downloaded successfully!');
+    } catch {
+      showToast('Could not export backup JSON.');
+    }
+  };
+
+  const importUserData = (jsonString: string): boolean => {
+    try {
+      const parsed = JSON.parse(jsonString);
+      if (parsed && Array.isArray(parsed.accounts) && parsed.accounts.length > 0) {
+        setAccounts(parsed.accounts);
+        if (parsed.currentAccountId) {
+          switchAccount(parsed.currentAccountId);
+        } else {
+          switchAccount(parsed.accounts[0].id);
+        }
+        triggerCelebration();
+        showToast('Backup successfully imported! All accounts and trips restored.');
+        return true;
+      } else {
+        showToast('Invalid backup file structure.');
+        return false;
+      }
+    } catch {
+      showToast('Failed to parse backup JSON file.');
+      return false;
     }
   };
 
@@ -405,7 +678,6 @@ export const TravelProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     description: string,
     mediaUrl?: string
   ) => {
-    // Check if similar issue exists at the same location to group
     setIssueReports((prev) => {
       const existingIdx = prev.findIndex(
         (i) => i.location.toLowerCase().includes(location.toLowerCase()) && i.issueType === issueType
@@ -462,7 +734,6 @@ export const TravelProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const updateTripPlan = (updatedPlan: Partial<TripPlan>) => {
     setActiveTrip((prev) => {
       const next = { ...prev, ...updatedPlan };
-      // Recalculate total cost
       let daysCost = 0;
       if (next.days) {
         next.days.forEach((day) => {
@@ -653,6 +924,22 @@ export const TravelProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setSelectedHotel,
         selectedRestaurant,
         setSelectedRestaurant,
+        accounts,
+        currentAccountId,
+        currentUser,
+        isLoggedIn,
+        isAuthModalOpen,
+        setIsAuthModalOpen,
+        authModalMode,
+        setAuthModalMode,
+        openAuthModal,
+        login,
+        register,
+        logout,
+        switchAccount,
+        deleteAccount,
+        exportUserData,
+        importUserData,
         isSOSOpen,
         setIsSOSOpen,
         isSearchOpen,

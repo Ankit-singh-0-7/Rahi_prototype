@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useTravel, ActiveTab } from '../../context/TravelContext';
 import {
   Compass,
@@ -25,6 +25,13 @@ import {
   CheckCircle2,
   AlertTriangle,
   Flame,
+  UserCheck,
+  LogOut,
+  UserPlus,
+  RefreshCw,
+  Download,
+  Shield,
+  ChevronDown,
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -39,11 +46,31 @@ export const Navbar: React.FC = () => {
     userProfile,
     businessProfile,
     issueReports,
+    currentUser,
+    isLoggedIn,
+    accounts,
+    openAuthModal,
+    switchAccount,
+    logout,
+    exportUserData,
   } = useTravel();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [notifDropdownOpen, setNotifDropdownOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setProfileDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const languagesList = [
     { code: 'English', label: 'English (EN)' },
@@ -302,22 +329,184 @@ export const Navbar: React.FC = () => {
               )}
             </div>
 
-            {/* Profile Avatar Button */}
-            <button
-              id="header-profile-btn"
-              onClick={() => setActiveTab('profile')}
-              className="flex items-center space-x-2 p-1 pl-1.5 pr-2 rounded-full border border-slate-200 hover:border-sky-300 hover:bg-sky-50/50 transition cursor-pointer"
-              title="My Account & Travel Profile"
-            >
-              <img
-                src={userProfile.avatar}
-                alt={userProfile.name}
-                className="w-7 h-7 rounded-full object-cover ring-1 ring-sky-500"
-              />
-              <span className="text-xs font-semibold text-slate-800 hidden lg:inline truncate max-w-[80px]">
-                {userProfile.name.split(' ')[0]}
-              </span>
-            </button>
+            {/* Profile & Account Switcher Dropdown */}
+            <div className="relative" ref={profileRef}>
+              <button
+                id="header-profile-btn"
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                className={`flex items-center space-x-2 p-1 pl-1.5 pr-2.5 rounded-full border transition cursor-pointer ${
+                  isLoggedIn
+                    ? 'border-sky-200 bg-sky-50/70 hover:bg-sky-100/70'
+                    : 'border-slate-300 bg-slate-100 hover:bg-slate-200'
+                }`}
+                title="Account, Profile & Switch User"
+              >
+                <img
+                  src={userProfile.avatar}
+                  alt={userProfile.name}
+                  className="w-7 h-7 rounded-full object-cover ring-1 ring-sky-500 shadow-xs"
+                />
+                <div className="text-left hidden lg:block max-w-[90px]">
+                  <p className="text-xs font-bold text-slate-900 leading-tight truncate">
+                    {userProfile.name.split(' ')[0]}
+                  </p>
+                  <p className="text-[10px] text-slate-700 leading-none truncate">
+                    {currentUser?.role === 'host' ? 'Host' : isLoggedIn ? 'Traveler' : 'Guest'}
+                  </p>
+                </div>
+                <ChevronDown className="w-3 h-3 text-slate-700 hidden sm:inline" />
+              </button>
+
+              {profileDropdownOpen && (
+                <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 z-50 animate-in fade-in">
+                  {/* Account Header */}
+                  <div className="p-3 bg-gradient-to-r from-sky-50 to-indigo-50/40 rounded-xl border border-sky-100 mb-2">
+                    <div className="flex items-center space-x-2.5">
+                      <img
+                        src={userProfile.avatar}
+                        alt={userProfile.name}
+                        className="w-10 h-10 rounded-full object-cover ring-2 ring-sky-500 shadow-xs"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-slate-900 truncate">{userProfile.name}</p>
+                        <p className="text-[11px] text-slate-700 truncate">{userProfile.email}</p>
+                        <span className="inline-block mt-1 text-[9px] uppercase tracking-wider font-extrabold px-1.5 py-0.5 rounded bg-sky-600 text-white">
+                          {currentUser?.role === 'host' ? 'Homestay Host' : isLoggedIn ? 'Explorer' : 'Guest Mode'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Navigation Links */}
+                  <div className="space-y-0.5 text-xs">
+                    <button
+                      id="account-menu-profile-btn"
+                      onClick={() => {
+                        setActiveTab('profile');
+                        setProfileDropdownOpen(false);
+                      }}
+                      className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-slate-700 hover:text-sky-700 hover:bg-sky-50 transition cursor-pointer font-medium"
+                    >
+                      <User className="w-4 h-4 text-sky-600" />
+                      <span>My Profile & Itineraries</span>
+                    </button>
+
+                    <button
+                      id="account-menu-bucket-btn"
+                      onClick={() => {
+                        setActiveTab('bucket-list');
+                        setProfileDropdownOpen(false);
+                      }}
+                      className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-slate-700 hover:text-sky-700 hover:bg-sky-50 transition cursor-pointer font-medium"
+                    >
+                      <Bookmark className="w-4 h-4 text-indigo-600" />
+                      <span>Bucket List & Saved Places</span>
+                    </button>
+
+                    {currentUser?.role === 'host' && (
+                      <button
+                        id="account-menu-business-btn"
+                        onClick={() => {
+                          setActiveTab('business');
+                          setProfileDropdownOpen(false);
+                        }}
+                        className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-slate-700 hover:text-emerald-700 hover:bg-emerald-50 transition cursor-pointer font-medium"
+                      >
+                        <Briefcase className="w-4 h-4 text-emerald-600" />
+                        <span>Business & Homestay Portal</span>
+                      </button>
+                    )}
+
+                    <div className="my-1 border-t border-slate-100" />
+
+                    {/* Quick Switch Profiles */}
+                    <div className="px-3 py-1 text-[10px] font-bold text-slate-600 uppercase tracking-wider flex items-center justify-between">
+                      <span>Switch Profile</span>
+                      <span className="text-[10px] font-normal text-slate-700">{accounts.length} local</span>
+                    </div>
+
+                    <div className="space-y-1 max-h-36 overflow-y-auto pr-1">
+                      {accounts.map((acc) => (
+                        <button
+                          id={`quick-switch-acc-${acc.id}`}
+                          key={acc.id}
+                          onClick={() => {
+                            switchAccount(acc.id);
+                            setProfileDropdownOpen(false);
+                          }}
+                          className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition cursor-pointer ${
+                            acc.id === currentUser?.id
+                              ? 'bg-sky-100/70 text-sky-900 font-bold'
+                              : 'text-slate-700 hover:bg-slate-100'
+                          }`}
+                        >
+                          <div className="flex items-center space-x-2 truncate">
+                            <img src={acc.avatar} alt={acc.name} className="w-5 h-5 rounded-full object-cover" />
+                            <span className="truncate">{acc.name}</span>
+                          </div>
+                          <span className="text-[10px] px-1 rounded bg-slate-200 text-slate-700 uppercase font-semibold">
+                            {acc.role === 'host' ? 'Host' : 'User'}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="my-1 border-t border-slate-100" />
+
+                    {/* Switch / Add Account Modal Trigger */}
+                    <button
+                      id="account-menu-switch-modal-btn"
+                      onClick={() => {
+                        openAuthModal('switch');
+                        setProfileDropdownOpen(false);
+                      }}
+                      className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-slate-700 hover:text-sky-700 hover:bg-sky-50 transition cursor-pointer font-medium"
+                    >
+                      <RefreshCw className="w-4 h-4 text-sky-600" />
+                      <span>Manage All Accounts</span>
+                    </button>
+
+                    <button
+                      id="account-menu-new-acc-btn"
+                      onClick={() => {
+                        openAuthModal('register');
+                        setProfileDropdownOpen(false);
+                      }}
+                      className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-slate-700 hover:text-sky-700 hover:bg-sky-50 transition cursor-pointer font-medium"
+                    >
+                      <UserPlus className="w-4 h-4 text-emerald-600" />
+                      <span>Add New Profile / Host</span>
+                    </button>
+
+                    <button
+                      id="account-menu-export-btn"
+                      onClick={() => {
+                        exportUserData();
+                        setProfileDropdownOpen(false);
+                      }}
+                      className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer font-medium"
+                    >
+                      <Download className="w-4 h-4 text-slate-700" />
+                      <span>Backup My Data (JSON)</span>
+                    </button>
+
+                    {isLoggedIn && (
+                      <button
+                        id="account-menu-logout-btn"
+                        onClick={() => {
+                          logout();
+                          setProfileDropdownOpen(false);
+                        }}
+                        className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-rose-600 hover:bg-rose-50 transition cursor-pointer font-medium"
+                      >
+                        <LogOut className="w-4 h-4 text-rose-500" />
+                        <span>Log Out to Guest</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Main SOS button in header */}
             <button

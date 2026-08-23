@@ -238,6 +238,30 @@ export interface TripPlan {
   status: 'Draft' | 'Saved' | 'Active';
 }
 
+export interface UserAccount {
+  id: string;
+  email: string;
+  name: string;
+  avatar: string;
+  password?: string;
+  role: 'traveler' | 'host' | 'guide';
+  bio: string;
+  preferences: string[];
+  preferredBudget: 'Budget (< ₹20k)' | 'Moderate (₹20k - ₹50k)' | 'Luxury (> ₹50k)';
+  savedDestinationIds: string[];
+  visitedDestinationIds: string[];
+  bucketListIds: string[];
+  emergencyContacts: { id: string; name: string; relation: string; phone: string }[];
+  language: string;
+  savedTrips: TripPlan[];
+  activeTrip?: TripPlan;
+  businessProfile?: BusinessProfile;
+  createdAt: string;
+  lastLoginAt: string;
+}
+
+export type AuthModalMode = 'login' | 'register' | 'switch';
+
 export interface UserProfile {
   name: string;
   email: string;

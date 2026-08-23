@@ -10,6 +10,8 @@ import {
   UserProfile,
   BusinessProfile,
   EnRouteStop,
+  UserAccount,
+  TripPlan,
 } from '../types';
 
 export const INITIAL_DESTINATIONS: Destination[] = [
@@ -992,6 +994,131 @@ export const INITIAL_BUSINESS_PROFILE: BusinessProfile = {
     }
   ]
 };
+
+export const INITIAL_ACCOUNTS: UserAccount[] = [
+  {
+    id: 'user-aarav',
+    email: 'aarav.travels@gmail.com',
+    name: 'Aarav Sharma',
+    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+    role: 'traveler',
+    password: 'password123',
+    bio: 'Passionate travel photographer & culture enthusiast. Looking for affordable hidden gems, scenic trails, and authentic regional cuisines.',
+    preferences: ['Nature & Mountains', 'Hidden Gems', 'Local Food', 'Heritage Architecture', 'Affordable Stays'],
+    preferredBudget: 'Moderate (₹20k - ₹50k)',
+    savedDestinationIds: ['dest-goa', 'dest-shillong', 'dest-gokarna'],
+    visitedDestinationIds: ['dest-jaipur', 'dest-varanasi'],
+    bucketListIds: ['dest-shillong', 'dest-kerala', 'dest-darjeeling', 'dest-gokarna'],
+    emergencyContacts: [
+      { id: 'ec-1', name: 'Dr. Priya Sharma', relation: 'Sister / Emergency Physician', phone: '+91 98112 34567' },
+      { id: 'ec-2', name: 'Ramesh Sharma', relation: 'Father', phone: '+91 98220 98765' }
+    ],
+    language: 'English',
+    savedTrips: [
+      {
+        id: 'trip-aarav-goa',
+        destination: 'Goa',
+        startDate: '2026-10-15',
+        endDate: '2026-10-19',
+        travellers: 2,
+        totalBudget: 45000,
+        preferences: ['Beaches', 'Heritage Culture', 'Local Seafood', 'Scenic Sunsets'],
+        transportMode: 'Express Train',
+        transportCost: 4800,
+        outboundHours: 8,
+        returnHours: 8,
+        stayHours: 96,
+        totalDurationHours: 112,
+        selectedHotel: INITIAL_HOTELS[0],
+        enRouteStops: [INITIAL_EN_ROUTE_STOPS[0]],
+        totalCost: 38400,
+        remainingBudget: 6600,
+        status: 'Saved',
+        days: [
+          {
+            day: 1,
+            date: 'Day 1 (15 Oct)',
+            title: 'Arrival, Heritage Check-in & Latin Quarter Walk',
+            stayName: 'Heritage Portuguese Quinta Villa',
+            stayCost: 3400,
+            transportMode: 'Station Cab',
+            transportCost: 800,
+            foodCost: 1400,
+            activitiesCost: 300,
+            totalDayCost: 5900,
+            items: [
+              {
+                id: 'item-1-1',
+                timeSlot: 'Morning',
+                activityTitle: 'Scenic Train Arrival & Check-in',
+                description: 'Arrive at Madgaon junction, transfer to Fontainhas Latin quarter, refresh with tender coconut drink.',
+                location: 'Panaji, Goa',
+                cost: 400,
+                category: 'relaxation',
+              },
+              {
+                id: 'item-1-2',
+                timeSlot: 'Afternoon',
+                activityTitle: 'Fontainhas Pastel Heritage Walking Trail',
+                description: 'Stroll through 18th-century cobblestone alleys, visit indie art galleries and heritage bakeries.',
+                location: 'Fontainhas, Panaji',
+                cost: 0,
+                category: 'sightseeing',
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    businessProfile: undefined,
+    createdAt: '2026-06-10',
+    lastLoginAt: '2026-08-23',
+  },
+  {
+    id: 'user-pooja-host',
+    email: 'pooja.host@quintahaven.com',
+    name: 'Pooja Hegde (Host)',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80',
+    role: 'host',
+    password: 'password123',
+    bio: 'Founding host & steward at Heritage Portuguese Quinta Villa. Proud promoter of local Konkani culture, eco-hospitality, and zero-commission tourism.',
+    preferences: ['Heritage Architecture', 'Homestays', 'Eco-Tourism', 'Cultural Events'],
+    preferredBudget: 'Moderate (₹20k - ₹50k)',
+    savedDestinationIds: ['dest-goa', 'dest-gokarna'],
+    visitedDestinationIds: ['dest-goa', 'dest-jaipur', 'dest-varanasi'],
+    bucketListIds: ['dest-coorg', 'dest-munnar'],
+    emergencyContacts: [
+      { id: 'ec-p1', name: 'Dr. Sudhir Hegde', relation: 'Spouse', phone: '+91 832 242 8900' }
+    ],
+    language: 'English',
+    savedTrips: [],
+    businessProfile: INITIAL_BUSINESS_PROFILE,
+    createdAt: '2026-05-01',
+    lastLoginAt: '2026-08-23',
+  },
+  {
+    id: 'user-rohan-backpacker',
+    email: 'rohan.explorer@gmail.com',
+    name: 'Rohan Sen',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+    role: 'traveler',
+    password: 'password123',
+    bio: 'Solo backpacker on a quest for cliff treks, secret waterfalls, and budget hostels across the Western Ghats & North East.',
+    preferences: ['Hidden Gems', 'Adventure & Treks', 'Hostels', 'Street Food'],
+    preferredBudget: 'Budget (< ₹20k)',
+    savedDestinationIds: ['dest-manali', 'dest-spiti', 'dest-gokarna'],
+    visitedDestinationIds: ['dest-manali'],
+    bucketListIds: ['dest-spiti', 'dest-shillong', 'dest-leh'],
+    emergencyContacts: [
+      { id: 'ec-r1', name: 'Ananya Sen', relation: 'Sister', phone: '+91 99300 45678' }
+    ],
+    language: 'English',
+    savedTrips: [],
+    businessProfile: undefined,
+    createdAt: '2026-07-15',
+    lastLoginAt: '2026-08-22',
+  }
+];
 
 export const COMMON_TRAVEL_PHRASES = [
   { english: 'Hello / Greetings', hindi: 'Namaste (नमस्ते)', context: 'Greetings' },
