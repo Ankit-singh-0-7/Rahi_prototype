@@ -1,0 +1,6 @@
+{
+  "name": "SafarSetu Tourism Platform",
+  "description": "Comprehensive modern tourism discovery, smart trip planning, hidden gems explorer, local business marketplace, community travel feed, and emergency tourist safety platform.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
