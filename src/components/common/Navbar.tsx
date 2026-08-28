@@ -110,31 +110,31 @@ export const Navbar: React.FC = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs transition-all">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs transition-all w-full max-w-full">
       {/* Top emergency safety ticker bar */}
-      <div className="bg-gradient-to-r from-sky-900 via-blue-900 to-indigo-900 text-white text-xs py-1.5 px-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <div className="bg-gradient-to-r from-sky-900 via-blue-900 to-indigo-900 text-white text-xs py-1.5 px-3 sm:px-4 w-full">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           <div className="flex items-center space-x-2 truncate">
-            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500 text-white">
-              24x7 TOURIST HELPLINE: 1363
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500 text-white shrink-0">
+              24x7 HELPLINE: 1363
             </span>
-            <span className="hidden sm:inline text-slate-300">
-              National Emergency: <strong className="text-white">112</strong> | Police: <strong className="text-white">100</strong> | Medical: <strong className="text-white">108</strong>
+            <span className="hidden md:inline text-slate-300 truncate text-[11px]">
+              Emergency: <strong className="text-white">112</strong> | Police: <strong className="text-white">100</strong> | Medical: <strong className="text-white">108</strong>
             </span>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
             <button
               id="topbar-translator-btn"
               onClick={() => setIsTranslatorOpen(true)}
               className="flex items-center space-x-1 text-slate-200 hover:text-white transition cursor-pointer text-[11px]"
             >
               <Languages className="w-3.5 h-3.5" />
-              <span>Travel Translator</span>
+              <span className="hidden sm:inline">Travel Translator</span>
             </button>
             <button
               id="topbar-sos-btn"
               onClick={() => setIsSOSOpen(true)}
-              className="bg-rose-600 hover:bg-rose-700 text-white font-bold px-2.5 py-0.5 rounded text-[11px] flex items-center space-x-1 shadow-xs animate-pulse cursor-pointer"
+              className="bg-rose-600 hover:bg-rose-700 text-white font-bold px-2.5 py-0.5 rounded text-[11px] flex items-center space-x-1 shadow-xs animate-pulse cursor-pointer shrink-0"
             >
               <PhoneCall className="w-3 h-3" />
               <span>SOS ASSISTANCE</span>
@@ -144,50 +144,51 @@ export const Navbar: React.FC = () => {
       </div>
 
       {/* Main navigation row */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <div className="max-w-7xl mx-auto px-3 sm:px-5 lg:px-6 w-full">
+        <div className="flex items-center justify-between h-16 gap-1.5 sm:gap-3">
           {/* Brand Logo */}
           <div
             id="brand-logo-btn"
             onClick={() => setActiveTab('home')}
-            className="flex items-center space-x-2.5 cursor-pointer group select-none"
+            className="flex items-center space-x-2 cursor-pointer group select-none shrink-0"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 via-blue-600 to-emerald-500 flex items-center justify-center text-white shadow-md shadow-sky-500/20 group-hover:scale-105 transition">
-              <Compass className="w-6 h-6 animate-spin-slow" />
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-sky-600 via-blue-600 to-emerald-500 flex items-center justify-center text-white shadow-md shadow-sky-500/20 group-hover:scale-105 transition shrink-0">
+              <Compass className="w-5 h-5 sm:w-6 sm:h-6 animate-spin-slow" />
             </div>
             <div>
               <div className="flex items-center space-x-1.5">
-                <span className="text-xl font-black tracking-tight text-slate-900 font-display">
+                <span className="text-lg sm:text-xl font-black tracking-tight text-slate-900 font-display">
                   Rahi<span className="text-sky-600">.</span>
                 </span>
-                <span className="text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-200">
+                <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-200">
                   Tourism
                 </span>
               </div>
-              <p className="text-[11px] text-slate-700 tracking-tight hidden sm:block">
+              <p className="text-[10px] text-slate-500 tracking-tight hidden 2xl:block">
                 Discover • Plan • Connect • Safe Travel
               </p>
             </div>
           </div>
 
-          {/* Desktop Nav Items (Scrollable / Bento Bar) */}
-          <nav className="hidden xl:flex items-center space-x-1">
-            {navLinks.slice(0, 8).map((link) => (
+          {/* Desktop Nav Items (Responsive Priority Bar) */}
+          <nav className="hidden lg:flex items-center space-x-0.5 xl:space-x-1 min-w-0">
+            {/* Primary items: dynamic slice depending on width */}
+            {navLinks.slice(0, 4).map((link) => (
               <button
                 id={`nav-link-${link.id}`}
                 key={link.id}
                 onClick={() => setActiveTab(link.id)}
-                className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg text-sm font-medium transition cursor-pointer relative ${
+                className={`flex items-center space-x-1 px-2 xl:px-2.5 py-1.5 rounded-lg text-xs xl:text-sm font-medium transition cursor-pointer shrink-0 ${
                   activeTab === link.id
                     ? 'text-sky-700 bg-sky-50 font-semibold'
                     : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50'
                 }`}
               >
                 {link.icon}
-                <span>{link.label}</span>
+                <span className="truncate">{link.label}</span>
                 {link.badge && (
                   <span
-                    className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${
+                    className={`text-[9px] font-bold px-1.5 py-0.2 rounded-full ${
                       link.badge === 'AI'
                         ? 'bg-emerald-100 text-emerald-700'
                         : 'bg-amber-100 text-amber-800'
@@ -199,22 +200,66 @@ export const Navbar: React.FC = () => {
               </button>
             ))}
 
-            {/* Dropdown for secondary pages */}
-            <div className="relative group">
+            {/* Extra visible items on extra-large screens (Hotels, Food) */}
+            {navLinks.slice(4, 6).map((link) => (
+              <button
+                id={`nav-link-xl-${link.id}`}
+                key={link.id}
+                onClick={() => setActiveTab(link.id)}
+                className={`hidden 2xl:flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-xs xl:text-sm font-medium transition cursor-pointer shrink-0 ${
+                  activeTab === link.id
+                    ? 'text-sky-700 bg-sky-50 font-semibold'
+                    : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50'
+                }`}
+              >
+                {link.icon}
+                <span className="truncate">{link.label}</span>
+              </button>
+            ))}
+
+            {/* Dropdown for remaining secondary pages */}
+            <div className="relative group shrink-0">
               <button
                 id="nav-more-dropdown-btn"
-                className="flex items-center space-x-1 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition cursor-pointer"
+                className="flex items-center space-x-1 px-2 xl:px-2.5 py-1.5 rounded-lg text-xs xl:text-sm font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition cursor-pointer"
               >
                 <span>More</span>
-                <span className="text-xs">▾</span>
+                <ChevronDown className="w-3 h-3 text-slate-500 group-hover:rotate-180 transition-transform" />
               </button>
-              <div className="absolute right-0 top-full mt-1 w-52 bg-white rounded-xl shadow-xl border border-slate-100 py-2 hidden group-hover:block transition animate-in fade-in-50">
-                {navLinks.slice(8).map((link) => (
+              <div className="absolute left-0 top-full mt-1 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 hidden group-hover:block transition animate-in fade-in-50 z-50">
+                {/* Items 4 and 5 shown in dropdown on non-2xl screens */}
+                <div className="2xl:hidden border-b border-slate-100 pb-1 mb-1">
+                  {navLinks.slice(4, 6).map((link) => (
+                    <button
+                      id={`nav-sublink-compact-${link.id}`}
+                      key={link.id}
+                      onClick={() => setActiveTab(link.id)}
+                      className={`w-full flex items-center justify-between px-3.5 py-2 text-xs transition cursor-pointer ${
+                        activeTab === link.id
+                          ? 'text-sky-700 bg-sky-50 font-semibold'
+                          : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
+                      }`}
+                    >
+                      <span className="flex items-center space-x-2">
+                        {link.icon}
+                        <span>{link.label}</span>
+                      </span>
+                      {link.badge && (
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                          {link.badge}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Remaining items (6+) */}
+                {navLinks.slice(6).map((link) => (
                   <button
                     id={`nav-sublink-${link.id}`}
                     key={link.id}
                     onClick={() => setActiveTab(link.id)}
-                    className={`w-full flex items-center justify-between px-4 py-2.5 text-sm transition cursor-pointer ${
+                    className={`w-full flex items-center justify-between px-3.5 py-2 text-xs transition cursor-pointer ${
                       activeTab === link.id
                         ? 'text-sky-700 bg-sky-50 font-semibold'
                         : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
@@ -225,7 +270,9 @@ export const Navbar: React.FC = () => {
                       <span>{link.label}</span>
                     </span>
                     {link.badge && (
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-700">
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
+                        link.badge === 'New' ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-700'
+                      }`}>
                         {link.badge}
                       </span>
                     )}
@@ -235,17 +282,17 @@ export const Navbar: React.FC = () => {
             </div>
           </nav>
 
-          {/* Right Action Icons & Controls */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* Right Action Icons & Controls (Always cleanly aligned & visible) */}
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
             {/* Search Button */}
             <button
               id="header-search-btn"
               onClick={() => setIsSearchOpen(true)}
-              className="p-2 rounded-lg text-slate-700 hover:text-sky-600 hover:bg-sky-50 transition cursor-pointer flex items-center space-x-1.5 text-xs font-medium border border-slate-200"
-              title="Search Destinations, Hotels, Food & Experiences"
+              className="p-1.5 sm:p-2 rounded-lg text-slate-700 hover:text-sky-600 hover:bg-sky-50 transition cursor-pointer flex items-center space-x-1.5 text-xs font-medium border border-slate-200"
+              title="Search Destinations, Hotels, Food & Experiences (Ctrl+K)"
             >
-              <Search className="w-4 h-4 text-slate-700" />
-              <span className="hidden md:inline">Search (Ctrl+K)</span>
+              <Search className="w-4 h-4 text-slate-700 shrink-0" />
+              <span className="hidden xl:inline text-xs">Search</span>
             </button>
 
             {/* Notifications Dropdown */}
@@ -253,7 +300,7 @@ export const Navbar: React.FC = () => {
               <button
                 id="header-notifications-btn"
                 onClick={() => setNotifDropdownOpen(!notifDropdownOpen)}
-                className="p-2 rounded-lg text-slate-700 hover:text-sky-600 hover:bg-sky-50 transition cursor-pointer relative"
+                className="p-1.5 sm:p-2 rounded-lg text-slate-700 hover:text-sky-600 hover:bg-sky-50 transition cursor-pointer relative"
                 title="Notifications"
               >
                 <Bell className="w-4 h-4" />
@@ -261,31 +308,31 @@ export const Navbar: React.FC = () => {
               </button>
 
               {notifDropdownOpen && (
-                <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-50 animate-in fade-in">
+                <div className="absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-50 animate-in fade-in">
                   <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                     <span className="text-xs font-bold text-slate-900">Notifications & Alerts</span>
-                    <span className="text-[10px] text-sky-600 font-semibold cursor-pointer">Mark read</span>
+                    <span className="text-[10px] text-sky-600 font-semibold cursor-pointer" onClick={() => setNotifDropdownOpen(false)}>Close</span>
                   </div>
                   <div className="divide-y divide-slate-100 text-xs">
                     <div className="py-2.5 flex items-start space-x-2">
                       <Flame className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                       <div>
                         <p className="font-semibold text-slate-800">New Hidden Gem in Goa</p>
-                        <p className="text-slate-700 text-[11px]">Kakolem waterfall trail just verified by 12 travellers.</p>
+                        <p className="text-slate-700 text-[11px]">Kakolem waterfall trail verified by travellers.</p>
                       </div>
                     </div>
                     <div className="py-2.5 flex items-start space-x-2">
                       <Tag className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                       <div>
                         <p className="font-semibold text-slate-800">35% Off Monsoon Deal Active</p>
-                        <p className="text-slate-700 text-[11px]">Heritage Quinta Villa released early-bird coupon.</p>
+                        <p className="text-slate-700 text-[11px]">Heritage Quinta Villa early-bird coupon.</p>
                       </div>
                     </div>
                     <div className="py-2.5 flex items-start space-x-2">
                       <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
                       <div>
                         <p className="font-semibold text-slate-800">Civic Issue Escalation</p>
-                        <p className="text-slate-700 text-[11px]">Nahargarh Fort cleanup dossier forwarded to authority.</p>
+                        <p className="text-slate-700 text-[11px]">Nahargarh Fort dossier submitted.</p>
                       </div>
                     </div>
                   </div>
@@ -298,10 +345,11 @@ export const Navbar: React.FC = () => {
               <button
                 id="header-language-btn"
                 onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-xs font-medium text-slate-700 transition cursor-pointer"
+                className="flex items-center space-x-1 px-2 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-xs font-medium text-slate-700 transition cursor-pointer"
+                title="Select Platform Language"
               >
                 <Globe className="w-3.5 h-3.5 text-slate-700" />
-                <span className="hidden sm:inline">{language.slice(0, 3)}</span>
+                <span className="hidden sm:inline text-[11px]">{language.slice(0, 3)}</span>
               </button>
 
               {langDropdownOpen && (
@@ -329,14 +377,14 @@ export const Navbar: React.FC = () => {
               )}
             </div>
 
-            {/* Profile & Account Switcher Dropdown */}
-            <div className="relative" ref={profileRef}>
+            {/* Profile & Account Switcher Dropdown (Anchor & Click Outside Protected) */}
+            <div className="relative shrink-0" ref={profileRef}>
               <button
                 id="header-profile-btn"
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className={`flex items-center space-x-2 p-1 pl-1.5 pr-2.5 rounded-full border transition cursor-pointer ${
+                className={`flex items-center space-x-1.5 p-1 pl-1 sm:pl-1.5 sm:pr-2 rounded-full border transition cursor-pointer shrink-0 ${
                   isLoggedIn
-                    ? 'border-sky-200 bg-sky-50/70 hover:bg-sky-100/70'
+                    ? 'border-sky-200 bg-sky-50/80 hover:bg-sky-100'
                     : 'border-slate-300 bg-slate-100 hover:bg-slate-200'
                 }`}
                 title="Account, Profile & Switch User"
@@ -344,9 +392,9 @@ export const Navbar: React.FC = () => {
                 <img
                   src={userProfile.avatar}
                   alt={userProfile.name}
-                  className="w-7 h-7 rounded-full object-cover ring-1 ring-sky-500 shadow-xs"
+                  className="w-7 h-7 rounded-full object-cover ring-1 ring-sky-500 shadow-xs shrink-0"
                 />
-                <div className="text-left hidden lg:block max-w-[90px]">
+                <div className="text-left hidden md:block max-w-[75px] xl:max-w-[90px]">
                   <p className="text-xs font-bold text-slate-900 leading-tight truncate">
                     {userProfile.name.split(' ')[0]}
                   </p>
@@ -354,7 +402,7 @@ export const Navbar: React.FC = () => {
                     {currentUser?.role === 'host' ? 'Host' : isLoggedIn ? 'Traveler' : 'Guest'}
                   </p>
                 </div>
-                <ChevronDown className="w-3 h-3 text-slate-700 hidden sm:inline" />
+                <ChevronDown className="w-3 h-3 text-slate-700 hidden sm:inline shrink-0" />
               </button>
 
               {profileDropdownOpen && (
@@ -365,7 +413,7 @@ export const Navbar: React.FC = () => {
                       <img
                         src={userProfile.avatar}
                         alt={userProfile.name}
-                        className="w-10 h-10 rounded-full object-cover ring-2 ring-sky-500 shadow-xs"
+                        className="w-10 h-10 rounded-full object-cover ring-2 ring-sky-500 shadow-xs shrink-0"
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-bold text-slate-900 truncate">{userProfile.name}</p>
@@ -508,23 +556,24 @@ export const Navbar: React.FC = () => {
               )}
             </div>
 
-            {/* Main SOS button in header */}
+            {/* Main SOS button in header (ALWAYS VISIBLE & NEVER PUSHED OFF) */}
             <button
               id="header-main-sos-btn"
               onClick={() => setIsSOSOpen(true)}
-              className="bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold px-3.5 py-1.5 rounded-lg text-xs flex items-center space-x-1.5 shadow-md shadow-rose-500/20 transition cursor-pointer"
+              className="bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold px-2.5 sm:px-3 py-1.5 rounded-lg text-xs flex items-center space-x-1 sm:space-x-1.5 shadow-md shadow-rose-500/20 transition cursor-pointer shrink-0"
             >
-              <ShieldAlert className="w-4 h-4" />
-              <span className="font-extrabold tracking-wide">SOS</span>
+              <ShieldAlert className="w-4 h-4 shrink-0" />
+              <span className="font-extrabold tracking-wide text-xs">SOS</span>
             </button>
 
-            {/* Mobile menu trigger */}
+            {/* Mobile / Tablet Drawer menu trigger */}
             <button
               id="mobile-menu-trigger-btn"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="xl:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100 cursor-pointer"
+              className="lg:hidden p-1.5 sm:p-2 rounded-lg text-slate-700 hover:bg-slate-100 cursor-pointer shrink-0"
+              aria-label="Toggle navigation menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
             </button>
           </div>
         </div>
@@ -532,7 +581,7 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="xl:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 max-h-[80vh] overflow-y-auto animate-in slide-in-from-top-4">
+        <div className="lg:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 max-h-[80vh] overflow-y-auto animate-in slide-in-from-top-4 shadow-xl">
           <div className="grid grid-cols-2 gap-2 pt-2 pb-4">
             {navLinks.map((link) => (
               <button
