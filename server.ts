@@ -213,10 +213,10 @@ app.post("/api/ai/modify-trip", async (req, res) => {
     const ai = getAIClient();
 
     if (ai && currentPlan) {
-      const prompt = `You are SafarSetu's AI Trip Planner. The user wants to modify their current trip plan with this instruction: "${instruction}".
+      const prompt = `You are Rahi's AI Trip Planner. The user wants to modify their current trip plan with this instruction: "${instruction}".
 Current Trip Plan: ${JSON.stringify(currentPlan)}
 
-Please return the updated complete JSON object with all adjustments applied (e.g. adjust costs, swap activities, switch hotels, add/remove days). Return strictly the JSON object.`;
+Please return the updated complete JSON object with all adjustments applied (e.g. adjust costs, swap activities, switch hotels, add/remove days, apply off-season discounts). Return strictly the JSON object.`;
 
       const response = await ai.models.generateContent({
         model: "gemini-3.7-flash",

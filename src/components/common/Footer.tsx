@@ -32,7 +32,7 @@ export const Footer: React.FC = () => {
                 <Compass className="w-6 h-6" />
               </div>
               <span className="text-2xl font-black tracking-tight text-white font-display">
-                Safar<span className="text-sky-400">Setu</span>
+                Rahi<span className="text-sky-400">.</span>
               </span>
             </div>
             <p className="text-sm text-slate-400 leading-relaxed max-w-sm">
@@ -160,7 +160,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom copyright & attribution */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 space-y-4 sm:space-y-0">
-          <p>© 2026 SafarSetu Platform. Empowering sustainable, affordable & safer tourism across India & worldwide.</p>
+          <p>© 2026 Rahi Platform. Empowering sustainable, affordable & safer tourism across India & worldwide.</p>
           <div className="flex items-center space-x-6">
             <span className="flex items-center space-x-1 text-slate-400">
               <Lock className="w-3.5 h-3.5" />

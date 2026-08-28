@@ -158,7 +158,7 @@ export const Navbar: React.FC = () => {
             <div>
               <div className="flex items-center space-x-1.5">
                 <span className="text-xl font-black tracking-tight text-slate-900 font-display">
-                  Safar<span className="text-sky-600">Setu</span>
+                  Rahi<span className="text-sky-600">.</span>
                 </span>
                 <span className="text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-sky-50 text-sky-700 border border-sky-200">
                   Tourism

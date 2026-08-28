@@ -129,7 +129,7 @@ export const AuthModal: React.FC = () => {
               <Compass className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-black tracking-tight">SafarSetu Account Hub</h2>
+              <h2 className="text-lg font-black tracking-tight">Rahi Account Hub</h2>
               <p className="text-xs text-sky-100 font-medium">Free Local Storage & Personal Itineraries</p>
             </div>
           </div>

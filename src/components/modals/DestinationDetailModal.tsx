@@ -159,6 +159,101 @@ export const DestinationDetailModal: React.FC = () => {
             </div>
           )}
 
+          {/* Off-Season Smart Fee Savings Breakdown */}
+          {selectedDestination.offSeasonDetails ? (
+            <div className="bg-gradient-to-br from-emerald-50 via-teal-50 to-sky-50 border border-emerald-200 rounded-3xl p-4 sm:p-5 space-y-3.5 shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-emerald-200/60 pb-3">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black">
+                    <IndianRupee className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="flex items-center space-x-1.5">
+                      <h4 className="font-black text-emerald-950 text-xs sm:text-sm">
+                        Off-Season Less Fee & Bargain Guide
+                      </h4>
+                      <span className="bg-emerald-600 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full">
+                        Save {selectedDestination.seasonSavingsPercent}%
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-emerald-800 font-medium">
+                      {selectedDestination.offSeasonDetails.offSeasonPeriod}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-3 bg-white/80 backdrop-blur-xs px-3 py-1.5 rounded-2xl border border-emerald-100 self-start sm:self-auto">
+                  <div className="text-right">
+                    <span className="text-[9px] uppercase font-bold text-slate-400 block line-through">
+                      Peak: ₹{selectedDestination.offSeasonDetails.peakDailyFee}/day
+                    </span>
+                    <span className="text-xs font-black text-emerald-700 block">
+                      Off-Season: ₹{selectedDestination.offSeasonDetails.offSeasonDailyFee}/day
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Discount Rates Matrix */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                <div className="bg-white/80 p-2.5 rounded-xl border border-emerald-100">
+                  <span className="text-[10px] text-slate-500 font-bold block">Resorts & Stays</span>
+                  <span className="text-xs sm:text-sm font-black text-emerald-700">
+                    -{selectedDestination.offSeasonDetails.stayDiscountPercent}% Fee
+                  </span>
+                </div>
+                <div className="bg-white/80 p-2.5 rounded-xl border border-emerald-100">
+                  <span className="text-[10px] text-slate-500 font-bold block">Cabs & Rentals</span>
+                  <span className="text-xs sm:text-sm font-black text-emerald-700">
+                    -{selectedDestination.offSeasonDetails.cabsDiscountPercent}% Fee
+                  </span>
+                </div>
+                <div className="bg-white/80 p-2.5 rounded-xl border border-emerald-100">
+                  <span className="text-[10px] text-slate-500 font-bold block">Activities / Entry</span>
+                  <span className="text-xs sm:text-sm font-black text-emerald-700">
+                    -{selectedDestination.offSeasonDetails.activitiesDiscountPercent}% Fee
+                  </span>
+                </div>
+                <div className="bg-white/80 p-2.5 rounded-xl border border-emerald-100">
+                  <span className="text-[10px] text-slate-500 font-bold block">Tourist Crowds</span>
+                  <span className="text-xs sm:text-sm font-black text-sky-700">
+                    -{selectedDestination.offSeasonDetails.crowdReductionPercent}% Less Rush
+                  </span>
+                </div>
+              </div>
+
+              {/* Reason & Perks */}
+              <div className="space-y-2 text-xs">
+                <p className="text-slate-700 leading-relaxed font-medium bg-white/60 p-2.5 rounded-xl border border-emerald-100">
+                  💡 <strong>Why tariffs drop:</strong> {selectedDestination.offSeasonDetails.savingsReason}
+                </p>
+
+                <div>
+                  <span className="font-bold text-emerald-900 block text-[11px] mb-1">
+                    Off-Season Exclusive Perks:
+                  </span>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                    {selectedDestination.offSeasonDetails.offSeasonPerks.map((perk, pIdx) => (
+                      <li key={pIdx} className="flex items-start space-x-1.5 text-slate-700 text-[11px]">
+                        <span className="text-emerald-600 font-bold">✓</span>
+                        <span>{perk}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-3.5 flex items-center justify-between">
+              <div>
+                <p className="font-bold text-emerald-950 text-xs">Off-Peak Season Travel Bargain</p>
+                <p className="text-emerald-800 text-[11px]">
+                  Traveling in off-season months ({selectedDestination.offSeasonMonths?.join(', ') || 'shoulder months'}) reduces hotel and travel fees by approximately <strong>{selectedDestination.seasonSavingsPercent}%</strong>.
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Top Attractions Highlights */}
           <div>
             <h4 className="font-bold text-slate-900 text-xs mb-2 uppercase tracking-wide">

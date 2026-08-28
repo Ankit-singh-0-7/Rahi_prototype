@@ -32,7 +32,7 @@ export const BusinessPortal: React.FC = () => {
   const [bizCategory, setBizCategory] = useState<'Hotel' | 'Restaurant' | 'Tour Guide' | 'Transport'>('Hotel');
   const [bizDest, setBizDest] = useState('Goa');
   const [bizPhone, setBizPhone] = useState('+91 98765 43210');
-  const [bizEmail, setBizEmail] = useState('host@safarsetu.com');
+  const [bizEmail, setBizEmail] = useState('host@rahi.travel');
   const [bizDesc, setBizDesc] = useState('');
 
   const handleGenerateBusinessInsights = async () => {
@@ -493,7 +493,7 @@ export const AIAssistantPage: React.FC = () => {
     {
       id: 'msg-1',
       sender: 'ai',
-      text: 'Namaste! I am your SafarSetu AI Travel Copilot. Ask me anything about off-beat hidden gems, budget tricks, local cuisine recommendations, safety advisories, or translation help in Hindi and regional languages.',
+      text: 'Namaste! I am your Rahi AI Travel Copilot. Ask me anything about off-beat hidden gems, budget tricks, local cuisine recommendations, safety advisories, or translation help in Hindi and regional languages.',
       timestamp: 'Just now',
     },
   ]);
@@ -566,7 +566,7 @@ export const AIAssistantPage: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-xl sm:text-2xl font-black font-display">SafarSetu AI Travel Copilot</h1>
+              <h1 className="text-xl sm:text-2xl font-black font-display">Rahi AI Travel Copilot</h1>
               <span className="bg-emerald-400/20 text-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-400/30">
                 Online & Verified
               </span>
@@ -619,7 +619,7 @@ export const AIAssistantPage: React.FC = () => {
           {isAiGenerating && (
             <div className="flex items-center space-x-2 text-xs text-slate-500 bg-slate-50 p-3 rounded-2xl w-fit border border-slate-200 animate-pulse">
               <Sparkles className="w-4 h-4 text-sky-600 animate-spin" />
-              <span>SafarSetu AI is analyzing travel databases...</span>
+              <span>Rahi AI is analyzing travel databases...</span>
             </div>
           )}
         </div>

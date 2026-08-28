@@ -150,7 +150,7 @@ export const CivicDossierModal: React.FC<CivicDossierModalProps> = ({ issue, onC
                 <Building2 className="w-3.5 h-3.5 text-slate-400" />
                 <span>Assigned: {customDossier?.assignedDepartment || issue.escalatedTo || 'District Municipal & Tourism Infrastructure Board'}</span>
               </div>
-              <span className="font-semibold text-emerald-600">Digitally Verified by SafarSetu Civic Protocol</span>
+              <span className="font-semibold text-emerald-600">Digitally Verified by Rahi Civic Protocol</span>
             </div>
           </div>
 

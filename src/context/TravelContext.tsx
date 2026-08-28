@@ -52,12 +52,12 @@ export type ActiveTab =
   | 'profile'
   | 'dashboard';
 
-const STORAGE_ACCOUNTS_KEY = 'safarsetu_accounts_v2';
-const STORAGE_CURRENT_USER_KEY = 'safarsetu_current_user_id_v2';
+const STORAGE_ACCOUNTS_KEY = 'rahi_accounts_v2';
+const STORAGE_CURRENT_USER_KEY = 'rahi_current_user_id_v2';
 
 const GUEST_PROFILE: UserProfile = {
   name: 'Guest Explorer',
-  email: 'guest@safarsetu.local',
+  email: 'guest@rahi.local',
   avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
   bio: 'Browsing in Guest Mode. Sign in or choose an account to save itineraries and sync your travel bucket list.',
   preferences: ['Hidden Gems', 'Nature & Mountains', 'Local Food'],
@@ -178,7 +178,7 @@ export const TravelProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   // Accounts state
   const [accounts, setAccounts] = useState<UserAccount[]>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_ACCOUNTS_KEY);
+      const saved = localStorage.getItem(STORAGE_ACCOUNTS_KEY) || localStorage.getItem('safarsetu_accounts_v2');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -191,7 +191,7 @@ export const TravelProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const [currentAccountId, setCurrentAccountId] = useState<string | null>(() => {
     try {
-      const savedId = localStorage.getItem(STORAGE_CURRENT_USER_KEY);
+      const savedId = localStorage.getItem(STORAGE_CURRENT_USER_KEY) || localStorage.getItem('safarsetu_current_user_id_v2');
       if (savedId && savedId !== 'guest') return savedId;
       if (savedId === 'guest') return null;
     } catch {
@@ -514,7 +514,7 @@ export const TravelProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     setIsAuthModalOpen(false);
     triggerCelebration();
-    showToast(`Welcome to SafarSetu, ${newAccount.name}! Account created & stored locally.`);
+    showToast(`Welcome to Rahi, ${newAccount.name}! Account created & stored locally.`);
     return true;
   };
 
@@ -552,7 +552,7 @@ export const TravelProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const jsonStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportObject, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute('href', jsonStr);
-      downloadAnchor.setAttribute('download', `safarsetu-backup-${new Date().toISOString().split('T')[0]}.json`);
+      downloadAnchor.setAttribute('download', `rahi-backup-${new Date().toISOString().split('T')[0]}.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();

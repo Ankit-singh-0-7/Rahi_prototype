@@ -122,6 +122,18 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({ destination })
           </div>
         </div>
 
+        {/* Off-Season Less Fee Highlight */}
+        {destination.seasonSavingsPercent > 0 && (
+          <div className="bg-emerald-50 border border-emerald-200/80 rounded-xl px-2.5 py-1.5 flex items-center justify-between text-[11px]">
+            <span className="text-emerald-900 font-bold flex items-center space-x-1">
+              <span>🏷️ Off-Season Deal</span>
+            </span>
+            <span className="text-emerald-700 font-extrabold">
+              Save {destination.seasonSavingsPercent}% fee
+            </span>
+          </div>
+        )}
+
         {/* Action Button */}
         <div className="pt-1 flex items-center space-x-2">
           <button

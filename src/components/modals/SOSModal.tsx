@@ -310,7 +310,7 @@ export const SOSModal: React.FC = () => {
           <div className="flex items-start space-x-2 text-[11px] text-slate-500 bg-slate-100 p-3 rounded-xl">
             <Info className="w-4 h-4 text-slate-600 shrink-0 mt-0.5" />
             <p>
-              <strong>Official Disclaimer:</strong> SafarSetu provides rapid connection tools, GPS coordinates broadcasting, and helpline access. In life-threatening emergencies, directly dial <strong>112</strong> on your phone.
+              <strong>Official Disclaimer:</strong> Rahi provides rapid connection tools, GPS coordinates broadcasting, and helpline access. In life-threatening emergencies, directly dial <strong>112</strong> on your phone.
             </p>
           </div>
         </div>

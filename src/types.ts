@@ -19,6 +19,19 @@ export interface WeatherInfo {
   airQuality: 'Good' | 'Moderate' | 'Poor';
 }
 
+export interface OffSeasonDetails {
+  offSeasonPeriod: string;
+  stayDiscountPercent: number;
+  cabsDiscountPercent: number;
+  activitiesDiscountPercent: number;
+  crowdReductionPercent: number;
+  peakDailyFee: number;
+  offSeasonDailyFee: number;
+  savingsReason: string;
+  offSeasonPerks: string[];
+  travelTips: string[];
+}
+
 export interface Destination {
   id: string;
   name: string;
@@ -35,6 +48,7 @@ export interface Destination {
   shoulderSeasonMonths: string[];
   offSeasonMonths: string[];
   seasonSavingsPercent: number;
+  offSeasonDetails?: OffSeasonDetails;
   travelDurationHours: number;
   distanceKm: number;
   tags: string[];
@@ -235,6 +249,8 @@ export interface TripPlan {
   enRouteStops: EnRouteStop[];
   totalCost: number;
   remainingBudget: number;
+  isOffSeasonRateApplied?: boolean;
+  savedOffSeasonAmount?: number;
   status: 'Draft' | 'Saved' | 'Active';
 }
 

@@ -34,7 +34,27 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     peakSeasonMonths: ['Nov', 'Dec', 'Jan', 'Feb'],
     shoulderSeasonMonths: ['Oct', 'Mar', 'Apr'],
     offSeasonMonths: ['May', 'Jun', 'Jul', 'Aug', 'Sep'],
-    seasonSavingsPercent: 38,
+    seasonSavingsPercent: 48,
+    offSeasonDetails: {
+      offSeasonPeriod: 'May to September (Monsoon & Pre-Monsoon)',
+      stayDiscountPercent: 55,
+      cabsDiscountPercent: 40,
+      activitiesDiscountPercent: 35,
+      crowdReductionPercent: 70,
+      peakDailyFee: 4800,
+      offSeasonDailyFee: 2400,
+      savingsReason: 'Luxury 5-star beachfront resorts slash tariffs by 50-60%, scooter rentals drop to ₹250/day, and waterfalls like Dudhsagar roar at peak beauty.',
+      offSeasonPerks: [
+        '55% lower luxury hotel tariffs & complimentary upgrades',
+        'Emerald green landscapes, misty ghats, and roaring waterfalls',
+        'Secluded beaches with 70% fewer tourists and serene vibes',
+        'Fresh monsoon fish curry & local Goan tavern culture'
+      ],
+      travelTips: [
+        'Carry quick-dry clothing and a high-grade rain poncho',
+        'Rent electric scooters or self-drive cabs for cheapest local transit'
+      ]
+    },
     travelDurationHours: 4,
     distanceKm: 580,
     tags: ['Beaches', 'Heritage', 'Nightlife', 'Seafood', 'Water Sports'],
@@ -69,7 +89,27 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     peakSeasonMonths: ['Nov', 'Dec', 'Jan'],
     shoulderSeasonMonths: ['Sep', 'Oct', 'Feb', 'Mar'],
     offSeasonMonths: ['Apr', 'May', 'Jun', 'Jul', 'Aug'],
-    seasonSavingsPercent: 42,
+    seasonSavingsPercent: 44,
+    offSeasonDetails: {
+      offSeasonPeriod: 'April to August (Summer & Teej Monsoon)',
+      stayDiscountPercent: 50,
+      cabsDiscountPercent: 38,
+      activitiesDiscountPercent: 30,
+      crowdReductionPercent: 65,
+      peakDailyFee: 4200,
+      offSeasonDailyFee: 2100,
+      savingsReason: 'Heritage Havelis offer royal suites at budget homestay rates. Evening fort walks and rooftop dining are cool and pleasant.',
+      offSeasonPerks: [
+        '50% discount on heritage palatial stays and royal dining',
+        'Zero queue times at Amer Fort, Hawa Mahal, and City Palace',
+        'Celebration of traditional Teej monsoon procession festival',
+        'Deep discounts in Johari and Bapu bazaars for authentic handicrafts'
+      ],
+      travelTips: [
+        'Explore forts early between 8:00 AM - 11:30 AM or after 4:30 PM',
+        'Stay in air-conditioned heritage Havelis with indoor courtyards'
+      ]
+    },
     travelDurationHours: 5,
     distanceKm: 280,
     tags: ['Heritage', 'Palaces', 'Handicrafts', 'Royal Dining', 'Architecture'],
@@ -104,7 +144,27 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     peakSeasonMonths: ['May', 'Jun', 'Dec', 'Jan'],
     shoulderSeasonMonths: ['Mar', 'Apr', 'Sep', 'Oct'],
     offSeasonMonths: ['Jul', 'Aug', 'Nov'],
-    seasonSavingsPercent: 35,
+    seasonSavingsPercent: 42,
+    offSeasonDetails: {
+      offSeasonPeriod: 'July to August (Monsoon) & November (Autumn Chill)',
+      stayDiscountPercent: 45,
+      cabsDiscountPercent: 35,
+      activitiesDiscountPercent: 30,
+      crowdReductionPercent: 75,
+      peakDailyFee: 3800,
+      offSeasonDailyFee: 1900,
+      savingsReason: 'Skip peak traffic jams on the highway. Riverside wooden chalets and apple orchard cottages drop prices drastically.',
+      offSeasonPerks: [
+        'Fresh red apple harvesting season in August-September',
+        'Clear mountain vistas with golden autumn leaves in November',
+        'Cozy cafe culture in Old Manali with zero waiting queues',
+        'Save up to ₹12,000 on a 5-day mountain escape'
+      ],
+      travelTips: [
+        'Check real-time highway road status and weather alerts in the app',
+        'Book verified riverside homestays for serene views'
+      ]
+    },
     travelDurationHours: 12,
     distanceKm: 540,
     tags: ['Snow', 'Mountains', 'Trekking', 'River Rafting', 'Cafes'],
@@ -136,6 +196,26 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     shoulderSeasonMonths: ['Sep', 'Oct', 'Mar'],
     offSeasonMonths: ['Apr', 'May', 'Jun', 'Jul', 'Aug'],
     seasonSavingsPercent: 40,
+    offSeasonDetails: {
+      offSeasonPeriod: 'April to August (Summer & Holy Monsoon Month)',
+      stayDiscountPercent: 45,
+      cabsDiscountPercent: 30,
+      activitiesDiscountPercent: 40,
+      crowdReductionPercent: 60,
+      peakDailyFee: 3200,
+      offSeasonDailyFee: 1600,
+      savingsReason: 'Ghatside riverview boutique havelis drop rates by 45%. Morning boat rides and evening Ganga Aarti have peaceful seating without dense queues.',
+      offSeasonPerks: [
+        'Uncrowded Ghats and intimate Ganga Aarti experiences',
+        'Private hand-rowed dawn boat rides at half peak season fare',
+        'Special discounts at certified Banarasi silk handloom cooperatives',
+        'Rain-drenched stone ghats offering dramatic atmospheric photography'
+      ],
+      travelTips: [
+        'Take boat rides between 5:00 AM - 7:00 AM before afternoon warmth',
+        'Book AC riverfront guesthouses along Dashashwamedh or Assi Ghat'
+      ]
+    },
     travelDurationHours: 8,
     distanceKm: 780,
     tags: ['Spiritual', 'Ghats', 'Street Food', 'Silk Weaving', 'Ancient History'],
@@ -167,6 +247,26 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     shoulderSeasonMonths: ['Sep', 'Oct', 'Nov', 'Mar'],
     offSeasonMonths: ['Apr', 'May', 'Jun', 'Jul', 'Aug'],
     seasonSavingsPercent: 45,
+    offSeasonDetails: {
+      offSeasonPeriod: 'May to August (Southwest Monsoon - Ayurveda Prime Season)',
+      stayDiscountPercent: 50,
+      cabsDiscountPercent: 35,
+      activitiesDiscountPercent: 40,
+      crowdReductionPercent: 65,
+      peakDailyFee: 4600,
+      offSeasonDailyFee: 2300,
+      savingsReason: 'Traditional Ayurveda recommends monsoon season as human pores open up for maximum herb absorption. Deluxe houseboats are available at up to 50% discount.',
+      offSeasonPerks: [
+        'Houseboats and spice plantation resorts offer 50% lower tariff',
+        'Traditional Ayurvedic herbal rejuvenation treatments at peak efficacy',
+        'Lush, glistening tea hills in Munnar enveloped in misty emerald romance',
+        'Serene, non-commercial backwater cruising without diesel traffic jams'
+      ],
+      travelTips: [
+        'Book AC houseboats with panoramic glass decks for monsoon views',
+        'Carry moisture-resistant backpack covers and herbal mosquito repellents'
+      ]
+    },
     travelDurationHours: 6,
     distanceKm: 620,
     tags: ['Houseboat', 'Tea Gardens', 'Nature', 'Ayurveda', 'Backwaters'],
@@ -198,6 +298,26 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     shoulderSeasonMonths: ['Sep', 'Oct', 'Mar', 'Apr'],
     offSeasonMonths: ['May', 'Jun', 'Jul', 'Aug'],
     seasonSavingsPercent: 30,
+    offSeasonDetails: {
+      offSeasonPeriod: 'May to August (Monsoon & Blooming Flora)',
+      stayDiscountPercent: 40,
+      cabsDiscountPercent: 25,
+      activitiesDiscountPercent: 25,
+      crowdReductionPercent: 70,
+      peakDailyFee: 3200,
+      offSeasonDailyFee: 2200,
+      savingsReason: 'Meghalaya is globally famous as the rain paradise. Waterfalls roar in monstrous fury and homestays provide cozy fireplace hospitality at 40% lower fees.',
+      offSeasonPerks: [
+        'Waterfalls like Nohkalikai and Wei Sawdong at their most breathtaking grandeur',
+        'Cozy eco-homestay rates drop by 40% with complimentary local Khasi meals',
+        'Ethereal misty pine ridges and dramatic monsoon photography',
+        'Caving adventures with certified guides at special seasonal discounts'
+      ],
+      travelTips: [
+        'Wear waterproof hiking boots with deep rubber lugs for root bridge descents',
+        'Book local Khasi guide-driven private cabs for misty mountain passes'
+      ]
+    },
     travelDurationHours: 7,
     distanceKm: 490,
     tags: ['Living Root Bridge', 'Waterfalls', 'Caving', 'Crystal Waters', 'Nature'],
@@ -229,6 +349,26 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     shoulderSeasonMonths: ['Dec', 'Jan', 'Feb', 'May'],
     offSeasonMonths: ['Jun', 'Jul', 'Aug'],
     seasonSavingsPercent: 33,
+    offSeasonDetails: {
+      offSeasonPeriod: 'June to August (Monsoon Wellness Retreats)',
+      stayDiscountPercent: 45,
+      cabsDiscountPercent: 30,
+      activitiesDiscountPercent: 35,
+      crowdReductionPercent: 65,
+      peakDailyFee: 2700,
+      offSeasonDailyFee: 1800,
+      savingsReason: 'Riverside yoga ashrams and luxury spiritual retreats cut fees by 45%. Perfect for introspective meditation, sound healing, and peaceful cafe working.',
+      offSeasonPerks: [
+        'Ashram residential retreats and yoga teacher workshops at steep discounts',
+        'Lush green Garhwal hills surrounding the swollen, majestic Ganga',
+        'Vibrant cafe culture in Tapovan with quiet riverside seating',
+        'Rain-refreshed waterfalls like Neer Garh in full glory'
+      ],
+      travelTips: [
+        'Note: White water rafting is suspended during peak monsoon (July-Aug), ideal for yoga and hikes',
+        'Stay near Tapovan or Laxman Jhula pedestrian zones'
+      ]
+    },
     travelDurationHours: 6,
     distanceKm: 240,
     tags: ['White Water Rafting', 'Yoga', 'Campfire', 'Ganges', 'Bungee'],
@@ -260,6 +400,26 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     shoulderSeasonMonths: ['Dec', 'Feb', 'Mar'],
     offSeasonMonths: ['Jun', 'Jul', 'Aug', 'Sep'],
     seasonSavingsPercent: 40,
+    offSeasonDetails: {
+      offSeasonPeriod: 'June to September (Monsoon Mist & Flush Harvest)',
+      stayDiscountPercent: 45,
+      cabsDiscountPercent: 30,
+      activitiesDiscountPercent: 30,
+      crowdReductionPercent: 70,
+      peakDailyFee: 3600,
+      offSeasonDailyFee: 2000,
+      savingsReason: 'Colonial heritage tea estate planter bungalows reduce rates by up to 45%. Watch swirling monsoon clouds over valley tea plantations with fresh warm momos.',
+      offSeasonPerks: [
+        'Planters heritage suites available at high-value discounted rates',
+        'Second-flush Muscatel tea plucking experience in tranquil gardens',
+        'Batasia loop and mall road completely free of tourist crowd congestion',
+        'Cozy colonial fireplaces and rain-soaked mountain tranquility'
+      ],
+      travelTips: [
+        'Enjoy scenic indoor tea-tasting sessions during afternoon drizzles',
+        'Take shared mountain jeeps between Ghoom and Darjeeling town'
+      ]
+    },
     travelDurationHours: 8,
     distanceKm: 610,
     tags: ['Tea Gardens', 'Himalayas', 'Toy Train', 'Colonial Heritage', 'Momos'],
@@ -291,6 +451,26 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     shoulderSeasonMonths: ['Sep', 'Oct', 'Mar', 'Apr'],
     offSeasonMonths: ['May', 'Jun', 'Jul', 'Aug'],
     seasonSavingsPercent: 45,
+    offSeasonDetails: {
+      offSeasonPeriod: 'May to August (Summer & Monsoon Lake Filling)',
+      stayDiscountPercent: 55,
+      cabsDiscountPercent: 35,
+      activitiesDiscountPercent: 40,
+      crowdReductionPercent: 65,
+      peakDailyFee: 4500,
+      offSeasonDailyFee: 2200,
+      savingsReason: 'Lakeview heritage hotels and palatial properties drop prices by over 50%. Monsoon turns the surrounding Aravallis lush green with overflowing lake waters.',
+      offSeasonPerks: [
+        '55% discounts on Lake Pichola luxury heritage boutique properties',
+        'Lush emerald hills surrounding Monsoon Palace (Sajjangarh)',
+        'Uncrowded rooftop dinners with serene candlelit lakeside ambiance',
+        'Special boat safari discounts and royal museum private walks'
+      ],
+      travelTips: [
+        'Book rooftop dinners for 6:30 PM to catch the sunset over the Aravalli hills',
+        'Stay in vintage boutique Havelis in the old city quarter'
+      ]
+    },
     travelDurationHours: 7,
     distanceKm: 650,
     tags: ['Lake Pichola', 'Palaces', 'Romantic', 'Heritage Walks', 'Art'],
@@ -322,6 +502,26 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     shoulderSeasonMonths: ['Oct', 'Nov', 'Feb', 'Mar'],
     offSeasonMonths: ['Jun', 'Jul', 'Aug', 'Sep'],
     seasonSavingsPercent: 35,
+    offSeasonDetails: {
+      offSeasonPeriod: 'June to September (Monsoon & Dramatic Coastlines)',
+      stayDiscountPercent: 45,
+      cabsDiscountPercent: 30,
+      activitiesDiscountPercent: 30,
+      crowdReductionPercent: 80,
+      peakDailyFee: 2600,
+      offSeasonDailyFee: 1600,
+      savingsReason: 'Cliffside sea-view cottages and beachfront wooden shacks offer up to 45% cheaper tariff. Experience wild roaring Arabian sea waves and solitude on pristine crescent beaches.',
+      offSeasonPerks: [
+        'Almost empty beaches (Kudle, Om, Half Moon) for maximum peace and introspection',
+        '45% cheaper cliffside bamboo cottage and eco-homestay rates',
+        'Lush green Western Ghats backdrop meeting raging coastal waters',
+        'Affordable fresh seafood and quiet beach-shack acoustic vibes'
+      ],
+      travelTips: [
+        'Swimming in high monsoon seas is prohibited; enjoy cliff walks and panoramic viewpoints',
+        'Carry non-slip trail footwear for rocky pathways between beaches'
+      ]
+    },
     travelDurationHours: 6,
     distanceKm: 480,
     tags: ['Cliff Trek', 'Beach Camping', 'Peaceful', 'Surfing', 'Seafood'],
@@ -710,7 +910,7 @@ export const INITIAL_OFFERS: OfferDiscount[] = [
     businessCategory: 'Hotels & Resorts',
     title: 'Monsoon & Shoulder Season 35% Flat Discount',
     discountPercent: 35,
-    promoCode: 'SAFARGOA35',
+    promoCode: 'RAHIGOA35',
     originalPrice: 4800,
     discountedPrice: 3120,
     validUntil: 'Valid till 30 Sep 2026',
@@ -744,7 +944,7 @@ export const INITIAL_OFFERS: OfferDiscount[] = [
     originalPrice: 1400,
     discountedPrice: 1120,
     validUntil: 'Valid this Month',
-    conditions: 'Prior reservation via SafarSetu required.',
+    conditions: 'Prior reservation via Rahi required.',
     image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80',
     destinationName: 'Jaipur',
     dealType: 'Group Deal',
@@ -939,7 +1139,7 @@ export const INITIAL_BUSINESS_PROFILE: BusinessProfile = {
       businessCategory: 'Hotels & Resorts',
       title: 'Monsoon & Shoulder Season 35% Flat Discount',
       discountPercent: 35,
-      promoCode: 'SAFARGOA35',
+      promoCode: 'RAHIGOA35',
       originalPrice: 4800,
       discountedPrice: 3120,
       validUntil: 'Valid till 30 Sep 2026',

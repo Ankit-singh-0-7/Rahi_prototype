@@ -24,6 +24,7 @@ export const Explore: React.FC = () => {
 
   const categories = [
     'All',
+    '🏷️ Off-Season Fee Deals',
     'Beaches & Coastal',
     'Mountains & Treks',
     'Heritage & Forts',
@@ -48,6 +49,7 @@ export const Explore: React.FC = () => {
 
         // Category filter
         if (selectedCategory !== 'All') {
+          if (selectedCategory === '🏷️ Off-Season Fee Deals') return (dest.seasonSavingsPercent || 0) >= 35;
           if (selectedCategory === 'Beaches & Coastal' && !dest.tags.includes('beaches') && !dest.tags.includes('nightlife')) return false;
           if (selectedCategory === 'Mountains & Treks' && !dest.tags.includes('snow') && !dest.tags.includes('mountains') && !dest.tags.includes('tea-gardens')) return false;
           if (selectedCategory === 'Heritage & Forts' && !dest.tags.includes('palaces') && !dest.tags.includes('heritage') && !dest.tags.includes('lakes')) return false;

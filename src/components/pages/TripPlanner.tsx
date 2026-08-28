@@ -64,16 +64,33 @@ export const TripPlanner: React.FC = () => {
     { id: 5, text: 'Compact travel medical kit (ORS, Paracetamol, Antacids, Bandages)', checked: false },
   ]);
 
-  // Calculations
-  const calculatedStayTotal = (activeTrip.selectedHotel?.pricePerNight || 3000) * (activeTrip.days.length || 1);
-  const calculatedActivitiesTotal = activeTrip.days.reduce(
+  // Calculations & Off-Season Savings
+  const matchedDest = destinations.find(
+    (d) => d.name.toLowerCase().includes(activeTrip.destination.toLowerCase()) || activeTrip.destination.toLowerCase().includes(d.name.toLowerCase())
+  );
+  const isOffSeason = Boolean(activeTrip.isOffSeasonRateApplied);
+  const stayDiscount = isOffSeason ? (matchedDest?.offSeasonDetails?.stayDiscountPercent || matchedDest?.seasonSavingsPercent || 40) / 100 : 0;
+  const transitDiscount = isOffSeason ? (matchedDest?.offSeasonDetails?.cabsDiscountPercent || 30) / 100 : 0;
+  const activitiesDiscount = isOffSeason ? (matchedDest?.offSeasonDetails?.activitiesDiscountPercent || 25) / 100 : 0;
+
+  const rawStayTotal = (activeTrip.selectedHotel?.pricePerNight || (isOffSeason && matchedDest?.offSeasonDetails?.offSeasonDailyFee ? matchedDest.offSeasonDetails.offSeasonDailyFee : 3000)) * (activeTrip.days.length || 1);
+  const calculatedStayTotal = Math.round(rawStayTotal * (1 - stayDiscount));
+
+  const rawActivitiesTotal = activeTrip.days.reduce(
     (total, day) => total + day.items.reduce((sum, it) => sum + it.cost, 0),
     0
   );
+  const calculatedActivitiesTotal = Math.round(rawActivitiesTotal * (1 - activitiesDiscount));
+
   const calculatedFoodTotal = activeTrip.days.reduce((total, day) => total + day.foodCost, 0);
-  const calculatedTransportTotal = activeTrip.transportCost + activeTrip.days.reduce((total, day) => total + day.transportCost, 0);
+
+  const rawTransportTotal = activeTrip.transportCost + activeTrip.days.reduce((total, day) => total + day.transportCost, 0);
+  const calculatedTransportTotal = Math.round(rawTransportTotal * (1 - transitDiscount));
 
   const calculatedTotalSpend = calculatedStayTotal + calculatedActivitiesTotal + calculatedFoodTotal + calculatedTransportTotal;
+  const peakTotalSpend = rawStayTotal + rawActivitiesTotal + calculatedFoodTotal + rawTransportTotal;
+  const offSeasonSavedTotal = Math.max(0, peakTotalSpend - calculatedTotalSpend);
+
   const remainingBudget = activeTrip.totalBudget - calculatedTotalSpend;
   const isOverBudget = remainingBudget < 0;
 
@@ -161,7 +178,7 @@ export const TripPlanner: React.FC = () => {
   };
 
   const handleShareItinerary = () => {
-    const shareText = `Check out my ${activeTrip.days.length}-Day itinerary for ${activeTrip.destination} planned on SafarSetu! Total Budget: ₹${activeTrip.totalBudget.toLocaleString()}.`;
+    const shareText = `Check out my ${activeTrip.days.length}-Day itinerary for ${activeTrip.destination} planned on Rahi! Total Budget: ₹${activeTrip.totalBudget.toLocaleString()}.`;
     navigator.clipboard.writeText(shareText);
     showToast('Itinerary share link & summary copied to clipboard!');
   };
@@ -215,55 +232,101 @@ export const TripPlanner: React.FC = () => {
       </div>
 
       {/* 2. TRIP CONFIGURATION ROW */}
-      <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-        <div>
-          <label className="block font-bold text-slate-700 mb-1">Destination Target</label>
-          <input
-            type="text"
-            value={activeTrip.destination}
-            onChange={(e) => updateTripPlan({ destination: e.target.value })}
-            className="w-full px-3.5 py-2 rounded-xl border border-slate-200 font-bold text-slate-900 bg-white"
-          />
+      <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-4 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Destination Target</label>
+            <input
+              type="text"
+              value={activeTrip.destination}
+              onChange={(e) => updateTripPlan({ destination: e.target.value })}
+              className="w-full px-3.5 py-2 rounded-xl border border-slate-200 font-bold text-slate-900 bg-white"
+            />
+          </div>
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Travellers Count</label>
+            <select
+              value={activeTrip.travellers}
+              onChange={(e) => updateTripPlan({ travellers: Number(e.target.value) })}
+              className="w-full px-3.5 py-2 rounded-xl border border-slate-200 font-bold text-slate-900 bg-white"
+            >
+              <option value={1}>1 Solo Traveller</option>
+              <option value={2}>2 Travellers (Couple / Friends)</option>
+              <option value={3}>3 Travellers</option>
+              <option value={4}>4 Travellers (Family / Group)</option>
+              <option value={6}>6+ Travellers</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Total Target Budget (₹)</label>
+            <input
+              type="number"
+              step={1000}
+              value={activeTrip.totalBudget}
+              onChange={(e) => updateTripPlan({ totalBudget: Number(e.target.value) })}
+              className="w-full px-3.5 py-2 rounded-xl border border-slate-200 font-black text-emerald-700 bg-white text-sm"
+            />
+          </div>
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Primary Transport Mode</label>
+            <select
+              value={activeTrip.transportMode}
+              onChange={(e) => updateTripPlan({ transportMode: e.target.value as any })}
+              className="w-full px-3.5 py-2 rounded-xl border border-slate-200 font-bold text-slate-900 bg-white"
+            >
+              <option value="Express Train">Express Train (Vande Bharat / Rajdhani)</option>
+              <option value="Flight">Domestic Flight</option>
+              <option value="AC Bus">Volvo AC Sleeper Bus</option>
+              <option value="Self-Drive Cab">Outstation Cab / Self-Drive</option>
+            </select>
+          </div>
         </div>
 
-        <div>
-          <label className="block font-bold text-slate-700 mb-1">Travellers Count</label>
-          <select
-            value={activeTrip.travellers}
-            onChange={(e) => updateTripPlan({ travellers: Number(e.target.value) })}
-            className="w-full px-3.5 py-2 rounded-xl border border-slate-200 font-bold text-slate-900 bg-white"
+        {/* Off-Season Fee Optimizer Toggle Banner */}
+        <div className={`p-4 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+          isOffSeason
+            ? 'bg-emerald-50 border-emerald-300 text-emerald-950'
+            : 'bg-slate-50 border-slate-200 text-slate-700'
+        }`}>
+          <div className="flex items-start space-x-3">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold shrink-0 ${
+              isOffSeason ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'
+            }`}>
+              🏷️
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="font-bold text-xs sm:text-sm">
+                  Off-Season Reduced Fee Mode (Save 30% - 55%)
+                </span>
+                {matchedDest?.seasonSavingsPercent && (
+                  <span className="bg-emerald-600 text-white font-extrabold px-2 py-0.5 rounded-full text-[10px]">
+                    ~{matchedDest.seasonSavingsPercent}% cheaper
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-slate-600 mt-0.5">
+                {matchedDest?.offSeasonDetails?.offSeasonPeriod
+                  ? `Best off-season window for ${activeTrip.destination}: ${matchedDest.offSeasonDetails.offSeasonPeriod}`
+                  : 'Applies off-peak hotel tariff discounts, cheaper local cab rates, and lower activity entry fees.'}
+              </p>
+            </div>
+          </div>
+
+          <button
+            id="toggle-off-season-btn"
+            onClick={() => updateTripPlan({ isOffSeasonRateApplied: !isOffSeason })}
+            className={`px-4 py-2 rounded-xl font-bold text-xs transition cursor-pointer shrink-0 ${
+              isOffSeason
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
+                : 'bg-white border border-slate-300 hover:bg-slate-100 text-slate-800'
+            }`}
           >
-            <option value={1}>1 Solo Traveller</option>
-            <option value={2}>2 Travellers (Couple / Friends)</option>
-            <option value={3}>3 Travellers</option>
-            <option value={4}>4 Travellers (Family / Group)</option>
-            <option value={6}>6+ Travellers</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block font-bold text-slate-700 mb-1">Total Target Budget (₹)</label>
-          <input
-            type="number"
-            step={1000}
-            value={activeTrip.totalBudget}
-            onChange={(e) => updateTripPlan({ totalBudget: Number(e.target.value) })}
-            className="w-full px-3.5 py-2 rounded-xl border border-slate-200 font-black text-emerald-700 bg-white text-sm"
-          />
-        </div>
-
-        <div>
-          <label className="block font-bold text-slate-700 mb-1">Primary Transport Mode</label>
-          <select
-            value={activeTrip.transportMode}
-            onChange={(e) => updateTripPlan({ transportMode: e.target.value as any })}
-            className="w-full px-3.5 py-2 rounded-xl border border-slate-200 font-bold text-slate-900 bg-white"
-          >
-            <option value="Express Train">Express Train (Vande Bharat / Rajdhani)</option>
-            <option value="Flight">Domestic Flight</option>
-            <option value="AC Bus">Volvo AC Sleeper Bus</option>
-            <option value="Self-Drive Cab">Outstation Cab / Self-Drive</option>
-          </select>
+            {isOffSeason ? '✓ Off-Season Rates Active' : 'Enable Off-Season Rates'}
+          </button>
         </div>
       </div>
 
@@ -271,14 +334,29 @@ export const TripPlanner: React.FC = () => {
       <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-xl border border-slate-800 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
           <div>
-            <h3 className="text-base font-bold flex items-center space-x-2">
-              <IndianRupee className="w-5 h-5 text-emerald-400" />
-              <span>Real-Time Budget Allocation Matrix</span>
-            </h3>
+            <div className="flex items-center space-x-2">
+              <h3 className="text-base font-bold flex items-center space-x-2">
+                <IndianRupee className="w-5 h-5 text-emerald-400" />
+                <span>Real-Time Budget Allocation Matrix</span>
+              </h3>
+              {isOffSeason && (
+                <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                  Off-Season Rate Active
+                </span>
+              )}
+            </div>
             <p className="text-xs text-slate-400">Live dynamic spend estimation based on stay tariffs, meal indices & scheduled activities.</p>
           </div>
 
           <div className="flex items-center space-x-4">
+            {isOffSeason && offSeasonSavedTotal > 0 && (
+              <div className="text-right bg-emerald-950/80 border border-emerald-600/40 px-3 py-1.5 rounded-xl">
+                <span className="text-[10px] uppercase font-bold text-emerald-400 block">Off-Season Saved</span>
+                <span className="text-sm font-black text-emerald-300">
+                  Save ₹{offSeasonSavedTotal.toLocaleString()}
+                </span>
+              </div>
+            )}
             <div className="text-right">
               <span className="text-[10px] uppercase font-bold text-slate-400 block">Total Est. Spend</span>
               <span className={`text-xl font-black ${isOverBudget ? 'text-rose-400' : 'text-emerald-400'}`}>
@@ -291,7 +369,14 @@ export const TripPlanner: React.FC = () => {
         {/* Breakdown Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1 text-xs">
           <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700">
-            <span className="text-slate-400 text-[10px] uppercase font-bold block">Accommodations</span>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400 text-[10px] uppercase font-bold block">Accommodations</span>
+              {isOffSeason && (
+                <span className="text-emerald-400 font-bold text-[10px]">
+                  -{Math.round(stayDiscount * 100)}%
+                </span>
+              )}
+            </div>
             <span className="text-sm font-bold text-white mt-0.5 block">₹{calculatedStayTotal.toLocaleString()}</span>
             <span className="text-[10px] text-sky-400">
               {activeTrip.selectedHotel ? `${activeTrip.selectedHotel.name.slice(0, 18)}...` : 'Est. Stay'}
@@ -299,13 +384,22 @@ export const TripPlanner: React.FC = () => {
           </div>
 
           <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700">
-            <span className="text-slate-400 text-[10px] uppercase font-bold block">Meals & Dining</span>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400 text-[10px] uppercase font-bold block">Meals & Dining</span>
+            </div>
             <span className="text-sm font-bold text-white mt-0.5 block">₹{calculatedFoodTotal.toLocaleString()}</span>
             <span className="text-[10px] text-emerald-400">Local eateries & shacks</span>
           </div>
 
           <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700">
-            <span className="text-slate-400 text-[10px] uppercase font-bold block">Activities & Entry Fees</span>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400 text-[10px] uppercase font-bold block">Activities & Entry</span>
+              {isOffSeason && (
+                <span className="text-amber-400 font-bold text-[10px]">
+                  -{Math.round(activitiesDiscount * 100)}%
+                </span>
+              )}
+            </div>
             <span className="text-sm font-bold text-white mt-0.5 block">₹{calculatedActivitiesTotal.toLocaleString()}</span>
             <span className="text-[10px] text-amber-400">
               {activeTrip.days.reduce((sum, d) => sum + d.items.length, 0)} scheduled items
@@ -313,7 +407,14 @@ export const TripPlanner: React.FC = () => {
           </div>
 
           <div className="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700">
-            <span className="text-slate-400 text-[10px] uppercase font-bold block">Transit & Local Cabs</span>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400 text-[10px] uppercase font-bold block">Transit & Cabs</span>
+              {isOffSeason && (
+                <span className="text-purple-400 font-bold text-[10px]">
+                  -{Math.round(transitDiscount * 100)}%
+                </span>
+              )}
+            </div>
             <span className="text-sm font-bold text-white mt-0.5 block">₹{calculatedTransportTotal.toLocaleString()}</span>
             <span className="text-[10px] text-purple-400">{activeTrip.transportMode}</span>
           </div>
