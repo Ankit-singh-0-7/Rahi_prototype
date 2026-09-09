@@ -59,17 +59,46 @@ export const Navbar: React.FC = () => {
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [notifDropdownOpen, setNotifDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [moreDropdownOpen, setMoreDropdownOpen] = useState(false);
 
   const profileRef = useRef<HTMLDivElement>(null);
+  const moreRef = useRef<HTMLDivElement>(null);
+  const langRef = useRef<HTMLDivElement>(null);
+  const notifRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (profileRef.current && !profileRef.current.contains(target)) {
         setProfileDropdownOpen(false);
       }
+      if (moreRef.current && !moreRef.current.contains(target)) {
+        setMoreDropdownOpen(false);
+      }
+      if (langRef.current && !langRef.current.contains(target)) {
+        setLangDropdownOpen(false);
+      }
+      if (notifRef.current && !notifRef.current.contains(target)) {
+        setNotifDropdownOpen(false);
+      }
     };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setProfileDropdownOpen(false);
+        setMoreDropdownOpen(false);
+        setLangDropdownOpen(false);
+        setNotifDropdownOpen(false);
+        setMobileMenuOpen(false);
+      }
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   const languagesList = [
@@ -108,6 +137,9 @@ export const Navbar: React.FC = () => {
     { id: 'safety', label: 'Safety & Issues', icon: <ShieldAlert className="w-4 h-4 text-rose-600" />, badge: criticalIssuesCount > 0 ? criticalIssuesCount : undefined },
     { id: 'business', label: 'Business Portal', icon: <Briefcase className="w-4 h-4" />, badge: pendingReservationsCount > 0 ? `${pendingReservationsCount} req` : undefined },
   ];
+
+  // Secondary items in the "More" dropdown
+  const isMoreActive = navLinks.slice(4).some((link) => link.id === activeTab);
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs transition-all w-full max-w-full">
@@ -217,68 +249,121 @@ export const Navbar: React.FC = () => {
               </button>
             ))}
 
-            {/* Dropdown for remaining secondary pages */}
-            <div className="relative group shrink-0">
+            {/* Dropdown for remaining secondary pages (Clickable, Hoverable, Keyboard Accessible & Touch Compatible) */}
+            <div
+              ref={moreRef}
+              className="relative shrink-0"
+              onMouseEnter={() => setMoreDropdownOpen(true)}
+              onMouseLeave={() => setMoreDropdownOpen(false)}
+            >
               <button
                 id="nav-more-dropdown-btn"
-                className="flex items-center space-x-1 px-2 xl:px-2.5 py-1.5 rounded-lg text-xs xl:text-sm font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition cursor-pointer"
+                type="button"
+                aria-expanded={moreDropdownOpen}
+                aria-haspopup="true"
+                onClick={() => setMoreDropdownOpen((prev) => !prev)}
+                className={`flex items-center space-x-1 px-2 xl:px-2.5 py-1.5 rounded-lg text-xs xl:text-sm font-medium transition cursor-pointer select-none ${
+                  isMoreActive || moreDropdownOpen
+                    ? 'text-sky-700 bg-sky-50 font-semibold ring-1 ring-sky-200 shadow-xs'
+                    : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50'
+                }`}
               >
                 <span>More</span>
-                <ChevronDown className="w-3 h-3 text-slate-500 group-hover:rotate-180 transition-transform" />
+                <ChevronDown
+                  className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 ${
+                    moreDropdownOpen ? 'rotate-180 text-sky-600' : ''
+                  }`}
+                />
               </button>
-              <div className="absolute left-0 top-full mt-1 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 hidden group-hover:block transition animate-in fade-in-50 z-50">
-                {/* Items 4 and 5 shown in dropdown on non-2xl screens */}
-                <div className="2xl:hidden border-b border-slate-100 pb-1 mb-1">
-                  {navLinks.slice(4, 6).map((link) => (
-                    <button
-                      id={`nav-sublink-compact-${link.id}`}
-                      key={link.id}
-                      onClick={() => setActiveTab(link.id)}
-                      className={`w-full flex items-center justify-between px-3.5 py-2 text-xs transition cursor-pointer ${
-                        activeTab === link.id
-                          ? 'text-sky-700 bg-sky-50 font-semibold'
-                          : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
-                      }`}
-                    >
-                      <span className="flex items-center space-x-2">
-                        {link.icon}
-                        <span>{link.label}</span>
-                      </span>
-                      {link.badge && (
-                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800">
-                          {link.badge}
-                        </span>
-                      )}
-                    </button>
-                  ))}
-                </div>
 
-                {/* Remaining items (6+) */}
-                {navLinks.slice(6).map((link) => (
-                  <button
-                    id={`nav-sublink-${link.id}`}
-                    key={link.id}
-                    onClick={() => setActiveTab(link.id)}
-                    className={`w-full flex items-center justify-between px-3.5 py-2 text-xs transition cursor-pointer ${
-                      activeTab === link.id
-                        ? 'text-sky-700 bg-sky-50 font-semibold'
-                        : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
-                    }`}
-                  >
-                    <span className="flex items-center space-x-2">
-                      {link.icon}
-                      <span>{link.label}</span>
-                    </span>
-                    {link.badge && (
-                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
-                        link.badge === 'New' ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-700'
-                      }`}>
-                        {link.badge}
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
+              {/* Seamless container: pt-1.5 provides an invisible hit bridge so mouse never loses hover across gap */}
+              {moreDropdownOpen && (
+                <div className="absolute left-0 top-full pt-1.5 w-60 z-50 animate-in fade-in-50 zoom-in-95 duration-150">
+                  <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 py-2 overflow-hidden ring-1 ring-slate-900/5">
+                    {/* Header caption */}
+                    <div className="px-3.5 pb-1 mb-1 border-b border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-700 uppercase tracking-wider">
+                      <span>Explore More Categories</span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setMoreDropdownOpen(false);
+                        }}
+                        className="text-slate-700 hover:text-slate-900 cursor-pointer"
+                        title="Close"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    {/* Items 4 and 5 shown in dropdown on non-2xl screens */}
+                    <div className="2xl:hidden border-b border-slate-100 pb-1 mb-1">
+                      {navLinks.slice(4, 6).map((link) => (
+                        <button
+                          id={`nav-sublink-compact-${link.id}`}
+                          key={link.id}
+                          type="button"
+                          onClick={() => {
+                            setActiveTab(link.id);
+                            setMoreDropdownOpen(false);
+                          }}
+                          className={`w-full flex items-center justify-between px-3.5 py-2 text-xs transition cursor-pointer ${
+                            activeTab === link.id
+                              ? 'text-sky-700 bg-sky-50 font-semibold'
+                              : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
+                          }`}
+                        >
+                          <span className="flex items-center space-x-2">
+                            {link.icon}
+                            <span>{link.label}</span>
+                          </span>
+                          {link.badge && (
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                              {link.badge}
+                            </span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Remaining items (6+) */}
+                    <div className="space-y-0.5">
+                      {navLinks.slice(6).map((link) => (
+                        <button
+                          id={`nav-sublink-${link.id}`}
+                          key={link.id}
+                          type="button"
+                          onClick={() => {
+                            setActiveTab(link.id);
+                            setMoreDropdownOpen(false);
+                          }}
+                          className={`w-full flex items-center justify-between px-3.5 py-2 text-xs transition cursor-pointer ${
+                            activeTab === link.id
+                              ? 'text-sky-700 bg-sky-50 font-semibold'
+                              : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
+                          }`}
+                        >
+                          <span className="flex items-center space-x-2">
+                            {link.icon}
+                            <span>{link.label}</span>
+                          </span>
+                          {link.badge && (
+                            <span
+                              className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
+                                link.badge === 'New'
+                                  ? 'bg-amber-100 text-amber-800'
+                                  : 'bg-rose-100 text-rose-700'
+                              }`}
+                            >
+                              {link.badge}
+                            </span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </nav>
 
@@ -296,7 +381,7 @@ export const Navbar: React.FC = () => {
             </button>
 
             {/* Notifications Dropdown */}
-            <div className="relative">
+            <div className="relative" ref={notifRef}>
               <button
                 id="header-notifications-btn"
                 onClick={() => setNotifDropdownOpen(!notifDropdownOpen)}
@@ -341,7 +426,7 @@ export const Navbar: React.FC = () => {
             </div>
 
             {/* Language Selector Dropdown */}
-            <div className="relative">
+            <div className="relative" ref={langRef}>
               <button
                 id="header-language-btn"
                 onClick={() => setLangDropdownOpen(!langDropdownOpen)}
