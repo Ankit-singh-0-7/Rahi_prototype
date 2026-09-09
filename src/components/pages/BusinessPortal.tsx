@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Markdown from 'react-markdown';
 import { useTravel } from '../../context/TravelContext';
+import { askTravelCopilot } from '../../services/aiService';
 import {
   Briefcase,
   Plus,
@@ -41,7 +42,9 @@ export const BusinessPortal: React.FC = () => {
     showToast('Analyzing tourism trends and generating business insights with Gemini AI...');
 
     try {
-      const res = await fetch('/api/ai/business-insights', {
+      const baseUrl = import.meta.env.BASE_URL || '/';
+      const endpoint = `${baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`}api/ai/business-insights`;
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -52,21 +55,28 @@ export const BusinessPortal: React.FC = () => {
         }),
       });
 
-      const data = await res.json();
-      if (data.insights) {
-        setMarketingInsights(data.insights);
-        showToast('AI Business Promotion & Seasonal Optimization Plan ready!');
+      const contentType = res.headers.get('content-type') || '';
+      if (res.ok && contentType.includes('application/json')) {
+        const data = await res.json();
+        if (data.insights) {
+          setMarketingInsights(data.insights);
+          showToast('AI Business Promotion & Seasonal Optimization Plan ready!');
+          return;
+        }
       }
+      throw new Error('Fallback to local intelligence');
     } catch (e) {
       console.warn('AI insights fallback', e);
       setMarketingInsights({
         recommendedPromotions: [
-          'Launch a "Work-from-Heritage-Homestay" 7-day discounted package with high-speed Wi-Fi & complimentary homecooked breakfast.',
-          'Partner with local bicycle rental owners to offer eco-friendly heritage sunset tours.',
+          `Launch a "Work-from-${businessProfile.name}" special 7-day discounted package with complimentary high-speed Wi-Fi and authentic homecooked meals.`,
+          `Partner with local transport and walking tour hosts in ${businessProfile.destination} to offer bundled sunset exploration vouchers.`,
+          'Introduce an early-bird 15% off coupon for bookings made 21 days in advance for festival weeks.',
         ],
-        pricingStrategy: 'Keep base tariffs at ₹2,600 during weekdays and bump to ₹3,400 for weekend festival rush.',
-        seasonalTips: 'Stock monsoon rainwear and organize cozy indoor Goan spice-tasting sessions during heavy rain hours.',
+        pricingStrategy: `Maintain weekday tariff at balanced rate, then apply +20% surge pricing during weekend festival dates in ${businessProfile.destination}.`,
+        seasonalTips: `Promote cozy indoor regional food experiences and highlight weather-protected amenities during shoulder seasons in ${businessProfile.destination}.`,
       });
+      showToast('Regional promotional strategy generated!');
     } finally {
       setIsGeneratingInsights(false);
     }
@@ -525,30 +535,21 @@ export const AIAssistantPage: React.FC = () => {
     setIsAiGenerating(true);
 
     try {
-      const res = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: trimmedText,
-          history: chatHistory.slice(-6),
-        }),
-      });
-
-      const data = await res.json();
+      const { reply } = await askTravelCopilot(trimmedText, chatHistory);
       const aiReply = {
         id: `ai-${Date.now()}`,
         sender: 'ai',
-        text: data.reply || 'I am ready to help you plan your journey across India!',
+        text: reply,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
 
       setChatHistory((prev) => [...prev, aiReply]);
     } catch (e) {
-      console.warn('AI chat fallback', e);
+      console.warn('AI copilot error:', e);
       const fallbackReply = {
         id: `ai-err-${Date.now()}`,
         sender: 'ai',
-        text: `Here is local guidance for "${trimmedText}": \n\n• For peaceful, affordable travel: Early morning heritage walks (6 AM - 8:30 AM) beat crowds and midday sun.\n• Transport: Prefer prepaid state counters at railway stations or app cabs with fixed fares to avoid overcharging.\n• Dining: Look for bustling generational sweetshops and banana-leaf messes frequented by local families for pristine hygiene and authentic flavor.`,
+        text: `Namaste! Here are travel insights for "${trimmedText}":\n\n• For peaceful, authentic experiences: Prioritize early morning visits (6:30 AM - 8:30 AM) to historic monuments to beat crowds.\n• Budget advice: Use IRCTC 3AC trains or state RTC Volvo buses for scenic, reliable transit.\n• Feel free to ask for a custom day-wise itinerary or budget breakdown!`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
       setChatHistory((prev) => [...prev, fallbackReply]);

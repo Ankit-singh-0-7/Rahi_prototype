@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTravel } from '../../context/TravelContext';
 import { COMMON_TRAVEL_PHRASES } from '../../data/sampleData';
+import { translateTravelText } from '../../services/aiService';
 import { Languages, Volume2, Sparkles, Copy, Check, X, ArrowRight, MessageSquare, BookOpen } from 'lucide-react';
 
 export const TranslatorModal: React.FC = () => {
@@ -28,19 +29,9 @@ export const TranslatorModal: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const res = await fetch('/api/ai/translate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          text: inputQuery.trim(),
-          sourceLang,
-          targetLang,
-          context: 'Tourist travel, bargaining, dining, direction or safety',
-        }),
-      });
-      const data = await res.json();
-      if (data.data) {
-        setTranslationResult(data.data);
+      const data = await translateTravelText(inputQuery.trim(), sourceLang, targetLang);
+      if (data) {
+        setTranslationResult(data);
       }
     } catch (e) {
       console.warn('AI translation failed', e);

@@ -11,13 +11,27 @@ const PORT = 3000;
 
 app.use(express.json({ limit: "10mb" }));
 
+// Normalize requests prefixed with base path if any (e.g. /Rahi_prototype/api/*)
+app.use((req, _res, next) => {
+  if (req.url.startsWith('/Rahi_prototype/api/')) {
+    req.url = req.url.replace('/Rahi_prototype', '');
+  }
+  next();
+});
+
 // Initialize Google GenAI client lazily if key exists
 let aiClient: GoogleGenAI | null = null;
 function getAIClient(): GoogleGenAI | null {
-  if (!aiClient && process.env.GEMINI_API_KEY) {
+  const apiKey =
+    process.env.GEMINI_API_KEY ||
+    process.env.GOOGLE_API_KEY ||
+    process.env.API_KEY ||
+    process.env.GOOGLE_GENAI_API_KEY;
+
+  if (!aiClient && apiKey) {
     try {
       aiClient = new GoogleGenAI({
-        apiKey: process.env.GEMINI_API_KEY,
+        apiKey,
         httpOptions: {
           headers: {
             "User-Agent": "aistudio-build",
@@ -644,6 +658,7 @@ async function setupApp() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), "dist");
+    app.use("/Rahi_prototype", express.static(distPath));
     app.use(express.static(distPath));
     app.get("*", (_req, res) => {
       res.sendFile(path.join(distPath, "index.html"));

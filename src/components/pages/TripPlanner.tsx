@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTravel } from '../../context/TravelContext';
 import { DayItineraryItem, EnRouteStop } from '../../types';
+import { generateSmartTripPlan } from '../../services/aiService';
 import {
   Calendar,
   Sparkles,
@@ -99,19 +100,14 @@ export const TripPlanner: React.FC = () => {
     showToast('Synthesizing optimized custom itinerary with Gemini AI...');
 
     try {
-      const res = await fetch('/api/ai/plan-trip', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          destination: activeTrip.destination,
-          daysCount: activeTrip.days.length || 4,
-          budgetTotal: activeTrip.totalBudget,
-          travelStyle: activeTrip.preferences.join(', '),
-          companions: `${activeTrip.travellers} Travellers`,
-        }),
+      const data = await generateSmartTripPlan({
+        destination: activeTrip.destination,
+        daysCount: activeTrip.days.length || 4,
+        budgetTotal: activeTrip.totalBudget,
+        travelStyle: activeTrip.preferences.join(', ') || 'Heritage, local food, sightseeing',
+        companions: `${activeTrip.travellers} Travellers`,
       });
 
-      const data = await res.json();
       if (data.trip && Array.isArray(data.trip.days)) {
         updateTripPlan({
           destination: data.trip.destination || activeTrip.destination,
