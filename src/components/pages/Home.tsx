@@ -52,8 +52,7 @@ export const Home: React.FC = () => {
     const destName = quickDest || 'Goa';
     updateTripPlan({
       destination: destName,
-      durationDays: parseInt(quickDuration) || 3,
-      travelStyle: quickStyle,
+      preferences: [quickStyle],
     });
     setActiveTab('plan-trip');
     showToast(`Smart itinerary generator initiated for ${destName}!`);

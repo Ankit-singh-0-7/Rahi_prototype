@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Markdown from 'react-markdown';
 import { useTravel } from '../../context/TravelContext';
 import {
   Briefcase,
@@ -572,7 +573,7 @@ export const AIAssistantPage: React.FC = () => {
               </span>
             </div>
             <p className="text-xs text-sky-100 mt-0.5">
-              Powered by Gemini 2.5 Flash. Real-time Indian travel tips, bargaining phrases, safety alerts & hidden gem recommendations.
+              Powered by Gemini AI Travel Intelligence. Real-time guidance, bargaining phrases, safety alerts & hidden gem recommendations.
             </p>
           </div>
         </div>
@@ -601,10 +602,16 @@ export const AIAssistantPage: React.FC = () => {
                 className={`p-4 rounded-2xl max-w-[85%] leading-relaxed ${
                   msg.sender === 'user'
                     ? 'bg-sky-600 text-white rounded-tr-xs'
-                    : 'bg-slate-50 text-slate-800 border border-slate-200 rounded-tl-xs whitespace-pre-line'
+                    : 'bg-slate-50 text-slate-800 border border-slate-200 rounded-tl-xs shadow-xs'
                 }`}
               >
-                {msg.text}
+                {msg.sender === 'user' ? (
+                  <div className="whitespace-pre-wrap">{msg.text}</div>
+                ) : (
+                  <div className="prose prose-xs sm:prose-sm max-w-none text-slate-800 leading-relaxed [&_p]:my-1.5 [&_ul]:my-1.5 [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:my-1.5 [&_ol]:list-decimal [&_ol]:pl-4 [&_li]:my-0.5 [&_strong]:text-slate-900 [&_h3]:font-bold [&_h3]:text-slate-900 [&_h3]:text-sm [&_h3]:mt-3 [&_h3]:mb-1 [&_hr]:my-2.5 [&_hr]:border-slate-200">
+                    <Markdown>{msg.text}</Markdown>
+                  </div>
+                )}
                 <span
                   className={`block text-[9px] mt-1.5 font-medium ${
                     msg.sender === 'user' ? 'text-sky-200 text-right' : 'text-slate-400'
