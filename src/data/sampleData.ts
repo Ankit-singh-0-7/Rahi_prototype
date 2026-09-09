@@ -77,10 +77,11 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     state: 'Rajasthan',
     tagline: 'The Pink City of royal palaces, vibrant bazaars & grand forts',
     description: 'Immerse in royal Rajasthani grandeur across colossal hill fortresses, intricate terracotta facades, astronomical wonders at Jantar Mantar, and artisanal block-printing studios.',
-    image: 'https://images.unsplash.com/photo-1603288940340-77a75038b726?auto=format&fit=crop&w=1200&q=80',
+    image: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=80',
     gallery: [
       'https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1603288940340-77a75038b726?auto=format&fit=crop&w=800&q=80'
+      'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=800&q=80'
     ],
     rating: 4.7,
     reviewsCount: 2180,
@@ -187,7 +188,12 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     state: 'Uttar Pradesh',
     tagline: 'Timeless spiritual ghats, evening Ganga Aarti & ancient alleyways',
     description: 'One of the worlds oldest living cities. Experience mesmerizing riverside dawn boat rides, soul-stirring evening lamps on the holy Ganges, silk weavers, and legendary street food.',
-    image: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1200&q=80',
+    image: 'https://images.unsplash.com/photo-1571536802807-30451e3955d8?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1571536802807-30451e3955d8?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1627894483216-2138af692e32?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=800&q=80'
+    ],
     rating: 4.7,
     reviewsCount: 3100,
     budgetEstimate: 1600,
@@ -814,7 +820,7 @@ export const INITIAL_ATTRACTIONS: Attraction[] = [
     reviewsCount: 780,
     durationHours: 1,
     bestTimeOfDay: 'Early Morning',
-    image: 'https://images.unsplash.com/photo-1603288940340-77a75038b726?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=800&q=80',
     openingHours: '7:00 AM - 6:00 PM',
     isCommunityDiscovered: true,
     coordinates: { lat: 26.985, lng: 75.851 },
@@ -850,7 +856,7 @@ export const INITIAL_ATTRACTIONS: Attraction[] = [
     reviewsCount: 2900,
     durationHours: 2,
     bestTimeOfDay: 'Early Morning',
-    image: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=800&q=80',
     openingHours: '5:00 AM - 7:30 AM',
     isCommunityDiscovered: false,
     coordinates: { lat: 25.289, lng: 83.007 },
